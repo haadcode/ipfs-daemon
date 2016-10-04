@@ -5,7 +5,7 @@ const rmrf = require('rimraf')
 const assert = require('assert')
 const IpfsDaemon = require('../ipfs-daemon')
 
-const dataDirectory = './.tmp'
+const dataDirectory = '/tmp/ipfs-daemon'
 
 describe('ipfs-daemon', function () {
   this.timeout(60000)
@@ -73,8 +73,8 @@ describe('ipfs-daemon', function () {
 
   describe('starts', () => {
     it('two daemons', (done) => {
-      const dir1 = './.tmp1'
-      const dir2 = './.tmp2'
+      const dir1 = dataDirectory + '/daemon1'
+      const dir2 = dataDirectory + '/daemon2'
       let started  = 0, res1, res2
 
       IpfsDaemon({ IpfsDataDir: dir1 })

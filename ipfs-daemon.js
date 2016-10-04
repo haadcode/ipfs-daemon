@@ -8,6 +8,8 @@ const IpfsApi = require('ipfs-api') // go-ipfs
 const Logger  = require('logplease')
 const logger = Logger.create("ipfs-daemon")
 
+Logger.setLogLevel(process.env.LOG ? process.env.LOG.toUpperCase() : 'ERROR')
+
 /* Usage:
     const IpfsDaemon = require('ipfs-daemon')
     IpfsDaemon(options).then((res) => {
@@ -19,7 +21,7 @@ const logger = Logger.create("ipfs-daemon")
 /*
   Default options:
   {
-    AppDataDir: './.tmp', // Local data diretory
+    AppDataDir: '/tmp/ipfs-daemon', // Local data diretory
     IpfsDataDir: process.env.IPFS_PATH, // Location of IPFS data repository
     Flags: ['--enable-pubsub-experiment'], // Flags to pass to IPFS daemon
     StandAlone: false, // Start an isolated daemon even if a local daemon is already running
@@ -30,9 +32,10 @@ const logger = Logger.create("ipfs-daemon")
     },
   }
 */
+
 module.exports = (options) => { 
   // Set default data directories
-  const appDataDir = './.tmp'
+  const appDataDir = '/tmp/ipfs-daemon'
   const ipfsDataDir = process.env.IPFS_PATH
     ? path.resolve(process.env.IPFS_PATH)
     : path.join(appDataDir, '/ipfs')
