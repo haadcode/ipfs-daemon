@@ -25,7 +25,6 @@ npm install ipfs-daemon
   AppDataDir: './.tmp', // Local data diretory
   IpfsDataDir: process.env.IPFS_PATH, // Location of IPFS data repository
   Flags: ['--enable-pubsub-experiment'], // Flags to pass to IPFS daemon
-  StandAlone: false, // Start an isolated daemon even if a local daemon is already running
   Addresses: { // IPFS Daemon addresses
     API: '/ip4/127.0.0.1/tcp/0',
     Swarm: ['/ip4/0.0.0.0/tcp/0'],
