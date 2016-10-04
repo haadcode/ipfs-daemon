@@ -1,15 +1,15 @@
 {
   "name": "ipfs-daemon",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Get a running IPFS daemon quickly and easily",
   "main": "ipfs-daemon.js",
   "scripts": {
     "test": "mocha",
     "postinstall": "./scripts/post_install.sh"
   },
-  "repository": { 
-    "type" : "git",
-    "url" : "https://github.com/haadcode/ipfs-daemon"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haadcode/ipfs-daemon"
   },
   "author": "Haad",
   "license": "MIT",
