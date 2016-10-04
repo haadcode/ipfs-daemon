@@ -7,6 +7,10 @@
     "test": "mocha",
     "postinstall": "./scripts/post_install.sh"
   },
+  "repository": { 
+    "type" : "git",
+    "url" : "https://github.com/haadcode/ipfs-daemon"
+  },
   "author": "Haad",
   "license": "MIT",
   "dependencies": {
