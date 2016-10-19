@@ -26,9 +26,9 @@ Logger.setLogLevel(process.env.LOG ? process.env.LOG.toUpperCase() : 'ERROR')
     Flags: ['--enable-pubsub-experiment'], // Flags to pass to IPFS daemon
     StandAlone: false, // Start an isolated daemon even if a local daemon is already running
     Addresses: { // IPFS Daemon addresses
-      API: '/ip4/127.0.0.1/tcp/0',
-      Swarm: ['/ip4/0.0.0.0/tcp/0'],
-      Gateway: '/ip4/0.0.0.0/tcp/0'
+      API: '/ip4/127.0.0.1/tcp/5001',
+      Swarm: ['/ip4/0.0.0.0/tcp/4001'],
+      Gateway: '/ip4/0.0.0.0/tcp/8080'
     },
   }
 */
@@ -48,9 +48,9 @@ module.exports = (options) => {
     IpfsDataDir: ipfsDataDir,
     // Bind the IPFS daemon to a random port by default
     Addresses: {
-      API: '/ip4/127.0.0.1/tcp/0',
-      Swarm: ['/ip4/0.0.0.0/tcp/0'],
-      Gateway: '/ip4/0.0.0.0/tcp/0'
+      API: '/ip4/127.0.0.1/tcp/5001',
+      Swarm: ['/ip4/0.0.0.0/tcp/4001'],
+      Gateway: '/ip4/0.0.0.0/tcp/8080'
     },
     // Flags to pass to the IPFS daemon
     Flags: ['--enable-pubsub-experiment'] // Enable Pubsub by default
