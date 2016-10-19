@@ -38,13 +38,13 @@ IpfsDaemon takes options as an argument where you can define various properties 
 
 ```javascript
 {
-  AppDataDir: '/tmp/ipfs-daemon', // Local data diretory
   IpfsDataDir: process.env.IPFS_PATH, // Location of IPFS data repository
+  LogDirectory: './', // Directory to write ipfs-daemon.log file for ipfs-daemon
   Flags: ['--enable-pubsub-experiment'], // Flags to pass to IPFS daemon
   Addresses: { // IPFS Daemon addresses
-    API: '/ip4/127.0.0.1/tcp/0',
-    Swarm: ['/ip4/0.0.0.0/tcp/0'],
-    Gateway: '/ip4/0.0.0.0/tcp/0'
+    API: '/ip4/127.0.0.1/tcp/5001',
+    Swarm: ['/ip4/0.0.0.0/tcp/4001'],
+    Gateway: '/ip4/0.0.0.0/tcp/8080'
   },
 }
 ```

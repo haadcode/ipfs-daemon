@@ -1,6 +1,7 @@
 'use strict'
 
 const fs      = require('fs')
+const mkdirp  = require('mkdirp')
 const path    = require('path')
 const ipfsd   = require('ipfsd-ctl')
 const IpfsApi = require('ipfs-api') // go-ipfs
@@ -18,34 +19,14 @@ Logger.setLogLevel(process.env.LOG ? process.env.LOG.toUpperCase() : 'ERROR')
       // res.Addresses - IPFS daemon's API, Gateway and Swarm addresses
     })
 */
-/*
-  Default options:
-  {
-    AppDataDir: '/tmp/ipfs-daemon', // Local data diretory
-    IpfsDataDir: process.env.IPFS_PATH, // Location of IPFS data repository
-    Flags: ['--enable-pubsub-experiment'], // Flags to pass to IPFS daemon
-    StandAlone: false, // Start an isolated daemon even if a local daemon is already running
-    Addresses: { // IPFS Daemon addresses
-      API: '/ip4/127.0.0.1/tcp/5001',
-      Swarm: ['/ip4/0.0.0.0/tcp/4001'],
-      Gateway: '/ip4/0.0.0.0/tcp/8080'
-    },
-  }
-*/
 
 module.exports = (options) => { 
-  // Set default data directories
-  const appDataDir = '/tmp/ipfs-daemon'
-  const ipfsDataDir = process.env.IPFS_PATH
-    ? path.resolve(process.env.IPFS_PATH)
-    : path.join(appDataDir, '/ipfs')
-
   // Default options
   let opts = {
-    // User's data directory (eg. application specific data directory)
-    AppDataDir: appDataDir,
     // Location of IPFS repository
-    IpfsDataDir: ipfsDataDir,
+    IpfsDataDir: process.env.IPFS_PATH || './ipfs',
+    // Location to write log files to
+    LogDirectory: './',
     // Bind the IPFS daemon to a random port by default
     Addresses: {
       API: '/ip4/127.0.0.1/tcp/5001',
@@ -60,15 +41,11 @@ module.exports = (options) => {
   Object.assign(opts, options)
 
   // Make sure we have the app data directory
-  if (!fs.existsSync(opts.AppDataDir))
-    fs.mkdirSync(opts.AppDataDir)
+  if (!fs.existsSync(opts.IpfsDataDir))
+    mkdirp.sync(opts.IpfsDataDir)
 
   // Setup logfiles
-  const logDirectory = path.join(opts.AppDataDir, '/logs')
-  if (!fs.existsSync(logDirectory))
-    fs.mkdirSync(logDirectory)
-
-  Logger.setLogfile(path.join(logDirectory, '/debug.log'))
+  Logger.setLogfile(path.join(opts.LogDirectory, '/ipfs-daemon.log'))
 
   // State
   let ipfsDaemon
