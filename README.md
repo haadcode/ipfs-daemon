@@ -46,6 +46,13 @@ IpfsDaemon takes options as an argument where you can define various properties 
     Swarm: ['/ip4/0.0.0.0/tcp/4001'],
     Gateway: '/ip4/0.0.0.0/tcp/8080'
   },
+  API: { // API config for IPFS daemon
+    HTTPHeaders: {
+      "Access-Control-Allow-Origin": ['*'], // Origins from which to allow http requests
+      "Access-Control-Allow-Methods": [], // "PUT", "GET", "POST", "DELETE", etc.
+      "Access-Control-Allow-Credentials": [] // "true" || "false"
+    } 
+  }
 }
 ```
 
