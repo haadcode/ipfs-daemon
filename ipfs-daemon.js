@@ -26,7 +26,7 @@ module.exports = (options) => {
     // Location of IPFS repository
     IpfsDataDir: process.env.IPFS_PATH || './ipfs',
     // Location to write log files to
-    LogDirectory: './',
+    LogDirectory: '/tmp',
     // Bind the IPFS daemon to a random port by default
     Addresses: {
       API: '/ip4/127.0.0.1/tcp/5001',

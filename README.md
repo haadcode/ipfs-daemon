@@ -39,7 +39,7 @@ IpfsDaemon takes options as an argument where you can define various properties 
 ```javascript
 {
   IpfsDataDir: process.env.IPFS_PATH, // Location of IPFS data repository
-  LogDirectory: './', // Directory to write ipfs-daemon.log file for ipfs-daemon
+  LogDirectory: '/tmp', // Directory to write ipfs-daemon.log file for ipfs-daemon
   Flags: ['--enable-pubsub-experiment'], // Flags to pass to IPFS daemon
   Addresses: { // IPFS Daemon addresses
     API: '/ip4/127.0.0.1/tcp/5001',
