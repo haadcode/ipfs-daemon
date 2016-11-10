@@ -17,7 +17,7 @@
     "go-ipfs-dep": "https://github.com/haadcode/go-ipfs-dep.git",
     "ipfs-api": "https://github.com/haadcode/js-ipfs-api.git",
     "ipfsd-ctl": "https://github.com/haadcode/js-ipfsd-ctl.git",
-    "logplease": "^1.2.7",
+    "logplease": "^1.2.9",
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
