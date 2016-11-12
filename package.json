@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "go-ipfs-dep": "https://github.com/haadcode/go-ipfs-dep.git",
+    "ipfs": "^0.18.0",
     "ipfs-api": "https://github.com/haadcode/js-ipfs-api.git",
     "ipfsd-ctl": "https://github.com/haadcode/js-ipfsd-ctl.git",
     "logplease": "^1.2.9",
