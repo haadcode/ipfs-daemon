@@ -1,26 +1,16 @@
 'use strict'
 
-const fs      = require('fs')
-const mkdirp  = require('mkdirp')
-const path    = require('path')
-const ipfsd   = require('ipfsd-ctl')
+const fs = require('fs')
+const mkdirp = require('mkdirp')
+const path = require('path')
+const ipfsd = require('ipfsd-ctl')
 const IpfsApi = require('ipfs-api') // go-ipfs
-// const IPFS    = require('ipfs') // TODO: js-ipfs
-const Logger  = require('logplease')
+// const IPFS = require('ipfs') // TODO: js-ipfs
+const EventEmitter = require('events').EventEmitter
+const Logger = require('logplease')
 const logger = Logger.create("ipfs-daemon")
 
 Logger.setLogLevel(process.env.LOG ? process.env.LOG.toUpperCase() : 'ERROR')
-
-/* Usage:
-    const IpfsDaemon = require('ipfs-daemon')
-    IpfsDaemon(options).then((res) => {
-      // res.ipfs - an IPFS API instance (js-ipfs and js-ipfs-api)
-      // res.daemon - IPFS daemon (ipfsd-ctl/node)
-      // res.Addresses - IPFS daemon's API, Gateway and Swarm addresses
-    })
-*/
-
-const EventEmitter  = require('events').EventEmitter
 
 const defaultOptions = {
   // Location of IPFS repository
@@ -41,21 +31,22 @@ class IpfsDaemon extends EventEmitter {
   constructor(options) {
     super()
 
-    this.ipfsApi = null
     this.GatewayAddress = null
     this.APIAddress = null
-    this._daemon = null
 
     let opts = Object.assign({}, defaultOptions)
     Object.assign(opts, options)
-    this.options = opts
+    this._options = opts
+
+    // Daemon that gets returned by ipfsd-ctl
+    this._daemon = null
 
     // Make sure we have the app data directory
-    if (!fs.existsSync(this.options.IpfsDataDir))
-      mkdirp.sync(this.options.IpfsDataDir)
+    if (!fs.existsSync(this._options.IpfsDataDir))
+      mkdirp.sync(this._options.IpfsDataDir)
 
     // Setup logfiles
-    Logger.setLogfile(path.join(this.options.LogDirectory, '/ipfs-daemon.log'))
+    Logger.setLogfile(path.join(this._options.LogDirectory, '/ipfs-daemon.log'))
 
     // Handle shutdown signals
     process.on('SIGINT', () => this._handleShutdown)
@@ -74,6 +65,7 @@ class IpfsDaemon extends EventEmitter {
     // Initialize and start the daemon
     this._initDaemon()
       .then((daemon) => this._startDaemon(daemon))
+      .then(() => this.emit('ready'))
       .catch((e) => this.emit('error', e))
   }
 
@@ -83,25 +75,17 @@ class IpfsDaemon extends EventEmitter {
 
   _initDaemon() {
     return new Promise((resolve, reject) => {
-      ipfsd.local(this.options.IpfsDataDir, this.options, (err, node) => {
-        if(err) throw err
+      ipfsd.local(this._options.IpfsDataDir, this._options, (err, node) => {
+        if(err) 
+          reject(err)
+
         this._daemon = node
 
         logger.debug("Initializing IPFS daemon")
         logger.debug(`Using IPFS repo at '${node.path}'`)
 
-        return this._daemon.init({ directory: this.options.IpfsDataDir }, (err, node) => {
-          if (!err) {
-            logger.debug("Starting IPFS daemon")
-            this._daemon.startDaemon(this.options.Flags, (err, ipfs) => {
-              this.GatewayAddress = this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : 'localhost:8080/ipfs/'
-              
-              if (err)
-                reject(err)
-
-              resolve(ipfs)
-            })
-          } else {
+        this._daemon.init({ directory: this._options.IpfsDataDir }, (err, node) => {
+          if (err) {
             // Check if the IPFS repo is an incompatible one
             const migrationNeeded = String(err).match('ipfs repo needs migration')
 
@@ -110,36 +94,51 @@ class IpfsDaemon extends EventEmitter {
               errStr += `Tried to init IPFS repo at '${opts.IpfsDataDir}', but failed.\n`
               errStr += `Use $IPFS_PATH to specify another repo path, eg. 'export IPFS_PATH=/tmp/orbit-floodsub'.`
 
-              errStr.split('\n')
-                .forEach((e) => logger.error(e))
+              errStr.split('\n').forEach((e) => logger.error(e))
 
-              this.emit('error', errStr)
-            }
+              reject(errStr)
+            } 
+          } else {
+            resolve()
           }
         })
       })
     })
   }
 
-  _startDaemon(ipfs) {
-    this.ipfsApi = IpfsApi(ipfs.apiHost, ipfs.apiPort)
-    this.APIAddress = ipfs.apiHost + ':' + ipfs.apiPort
+  _startDaemon() {
+    return new Promise((resolve, reject) => {
+      logger.debug("Starting IPFS daemon")
+      this._daemon.startDaemon(this._options.Flags, (err, ipfs) => {
+        if (err)
+          return reject(err)
 
-    logger.debug("IPFS daemon started at", this.APIAddress)
-    logger.debug("Gateway listening at", this.GatewayAddress)
+        if (this._daemon.gatewayAddr)
+          this.GatewayAddress = this._daemon.gatewayAddr + '/ipfs/'
+        // this.GatewayAddress = this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : 'localhost:8080/ipfs/'
 
-    this.emit('ready', this)
+        Object.assign(this, IpfsApi(ipfs.apiHost, ipfs.apiPort))
+        this.APIAddress = ipfs.apiHost + ':' + ipfs.apiPort
+
+        logger.debug("IPFS daemon started at", this.APIAddress)
+        logger.debug("Gateway listening at", this.GatewayAddress)
+
+        resolve(ipfs)
+      })      
+    })
   }
 
   // Handle shutdown gracefully
   _handleShutdown() {
     logger.debug("Shutting down...")
     this._daemon.stopDaemon()
-    this.ipfsApi = null
     this.GatewayAddress = null
     this.APIAddress = null
-    this.options = null
+    this._options = null
     this._daemon = null
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
+    process.removeAllListeners('uncaughtException')
     logger.debug("IPFS daemon finished")
   } 
    
