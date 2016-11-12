@@ -3,29 +3,12 @@
 const fs = require('fs')
 const mkdirp = require('mkdirp')
 const path = require('path')
-const ipfsd = require('ipfsd-ctl')
-const IpfsApi = require('ipfs-api') // go-ipfs
-// const IPFS = require('ipfs') // TODO: js-ipfs
 const EventEmitter = require('events').EventEmitter
+const ipfsd = require('ipfsd-ctl')
 const Logger = require('logplease')
 const logger = Logger.create("ipfs-daemon")
 
-Logger.setLogLevel(process.env.LOG ? process.env.LOG.toUpperCase() : 'ERROR')
-
-const defaultOptions = {
-  // Location of IPFS repository
-  IpfsDataDir: process.env.IPFS_PATH || './ipfs',
-  // Location to write log files to
-  LogDirectory: '/tmp',
-  // Bind the IPFS daemon to a random port by default
-  Addresses: {
-    API: '/ip4/127.0.0.1/tcp/5001',
-    Swarm: ['/ip4/0.0.0.0/tcp/4001'],
-    Gateway: '/ip4/0.0.0.0/tcp/8080'
-  },
-  // Flags to pass to the IPFS daemon
-  Flags: ['--enable-pubsub-experiment'] // Enable Pubsub by default
-}
+const defaultOptions = require('./default-options')
 
 class IpfsDaemon extends EventEmitter {
   constructor(options) {
@@ -113,15 +96,17 @@ class IpfsDaemon extends EventEmitter {
         if (err)
           return reject(err)
 
-        if (this._daemon.gatewayAddr)
-          this.GatewayAddress = this._daemon.gatewayAddr + '/ipfs/'
         // this.GatewayAddress = this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : 'localhost:8080/ipfs/'
+        if (this._daemon.gatewayAddr) {
+          this.GatewayAddress = this._daemon.gatewayAddr + '/ipfs/'
+          logger.debug("Gateway listening at", this.GatewayAddress)
+        }
 
-        Object.assign(this, IpfsApi(ipfs.apiHost, ipfs.apiPort))
         this.APIAddress = ipfs.apiHost + ':' + ipfs.apiPort
-
+        
+        // Object.assign(this, IpfsApi(ipfs.apiHost, ipfs.apiPort))
+        Object.assign(this, ipfs)
         logger.debug("IPFS daemon started at", this.APIAddress)
-        logger.debug("Gateway listening at", this.GatewayAddress)
 
         resolve(ipfs)
       })      

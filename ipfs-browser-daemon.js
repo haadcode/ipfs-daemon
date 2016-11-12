@@ -3,28 +3,12 @@
 const fs = require('fs')
 const mkdirp = require('mkdirp')
 const path = require('path')
-// const ipfsd = require('ipfsd-ctl')
-const IPFS = require('ipfs')
 const EventEmitter = require('events').EventEmitter
+const IPFS = require('ipfs')
 const Logger = require('logplease')
 const logger = Logger.create("ipfs-daemon")
 
-Logger.setLogLevel(process.env.LOG ? process.env.LOG.toUpperCase() : 'ERROR')
-
-const defaultOptions = {
-  // Location of IPFS repository
-  IpfsDataDir: process.env.IPFS_PATH || './ipfs',
-  // Location to write log files to
-  LogDirectory: '/tmp',
-  // Bind the IPFS daemon to a random port by default
-  Addresses: {
-    API: '/ip4/127.0.0.1/tcp/5001',
-    Swarm: ['/ip4/0.0.0.0/tcp/4001'],
-    Gateway: '/ip4/0.0.0.0/tcp/8080'
-  },
-  // Flags to pass to the IPFS daemon
-  Flags: ['--enable-pubsub-experiment'] // Enable Pubsub by default
-}
+const defaultOptions = require('./default-options')
 
 class IpfsDaemon extends EventEmitter {
   constructor(options) {
@@ -53,17 +37,12 @@ class IpfsDaemon extends EventEmitter {
 
     // Log errors
     process.on('uncaughtException', (error) => {
-      console.log("we ended up here")
-
       // Skip 'ctrl-c' error and shutdown gracefully
       const match = String(error).match(/non-zero exit code 255/)
-      if(match) {
+      if(match)
         this._handleShutdown()
-      } else {
+      else
         logger.error(error)
-        // this.emit('error', error)
-        this._handleShutdown()
-      }
     })
 
     // Initialize and start the daemon
@@ -96,36 +75,7 @@ class IpfsDaemon extends EventEmitter {
               resolve()            
           })
         })
-
       })
-      // ipfsd.local(this._options.IpfsDataDir, this._options, (err, node) => {
-      //   if(err) 
-      //     reject(err)
-
-      //   this._daemon = node
-
-      //   logger.debug("Initializing IPFS daemon")
-      //   logger.debug(`Using IPFS repo at '${node.path}'`)
-
-      //   this._daemon.init({ directory: this._options.IpfsDataDir }, (err, node) => {
-      //     if (err) {
-      //       // Check if the IPFS repo is an incompatible one
-      //       const migrationNeeded = String(err).match('ipfs repo needs migration')
-
-      //       if (migrationNeeded) {
-      //         let errStr = `Error initializing IPFS daemon: '${migrationNeeded[0]}'\n`
-      //         errStr += `Tried to init IPFS repo at '${opts.IpfsDataDir}', but failed.\n`
-      //         errStr += `Use $IPFS_PATH to specify another repo path, eg. 'export IPFS_PATH=/tmp/orbit-floodsub'.`
-
-      //         errStr.split('\n').forEach((e) => logger.error(e))
-
-      //         reject(errStr)
-      //       } 
-      //     } else {
-      //       resolve()
-      //     }
-      //   })
-      // })
     })
   }
 
@@ -137,31 +87,17 @@ class IpfsDaemon extends EventEmitter {
           return reject(err)
         }
 
-        if (this._daemon.gatewayAddr)
+        if (this._daemon.gatewayAddr) {
           this.GatewayAddress = this._daemon.gatewayAddr + '/ipfs/'
+          logger.debug("Gateway listening at", this.GatewayAddress)
+        }
 
-        Object.assign(this, this._daemon)
         // this.APIAddress = this._daemon.apiMultiaddr + ':' + this._daemon.apiMultiaddr
-
+        Object.assign(this, this._daemon)
         logger.debug("IPFS daemon started")
-        // logger.debug("Gateway listening at", this.GatewayAddress)
 
         resolve()
       })
-      // this._daemon.startDaemon(this._options.Flags, (err, ipfs) => {
-      //   if (err)
-      //     return reject(err)
-
-      //   this.GatewayAddress = this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : 'localhost:8080/ipfs/'
-
-      //   Object.assign(this, IpfsApi(ipfs.apiHost, ipfs.apiPort))
-      //   this.APIAddress = ipfs.apiHost + ':' + ipfs.apiPort
-
-      //   logger.debug("IPFS daemon started at", this.APIAddress)
-      //   logger.debug("Gateway listening at", this.GatewayAddress)
-
-      //   resolve(ipfs)
-      // })      
     })
   }
 
@@ -176,9 +112,11 @@ class IpfsDaemon extends EventEmitter {
     this.APIAddress = null
     this._options = null
     this._daemon = null
+
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
     process.removeAllListeners('uncaughtException')
+
     logger.debug("IPFS daemon finished")
   } 
    
