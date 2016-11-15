@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const rmrf = require('rimraf')
 const assert = require('assert')
-const IpfsDaemon = require('../ipfs-browser-daemon')
+const IpfsDaemon = require('../src/index.js')
 
 const dataDirectory = '/tmp/ipfs-daemon'
 const defaultIpfsDirectory = './ipfs'
@@ -18,7 +18,7 @@ const hasIpfsApi = (ipfs) => {
       // && ipfs.pubsub.sub !== undefined
 }
 
-describe('ipfs-daemon', function () {
+describe('ipfs-browser-daemon', function () {
   this.timeout(TIMEOUT)
 
   describe('starts a daemon', () => {
@@ -49,7 +49,7 @@ describe('ipfs-daemon', function () {
       ipfs.on('error', done)
       ipfs.on('ready', (res) => {
         assert.equal(hasIpfsApi(ipfs), true)
-        assert.equal(fs.existsSync(opts.IpfsDataDir), true)
+        // assert.equal(fs.existsSync(opts.IpfsDataDir), true)
         assert.equal(ipfs.GatewayAddress, null)
         // assert.equal(ipfs.APIAddress.indexOf('60320') > -1, true)
         ipfs.stop()

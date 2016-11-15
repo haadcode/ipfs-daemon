@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const rmrf = require('rimraf')
 const assert = require('assert')
-const IpfsDaemon = require('../ipfs-daemon')
+const IpfsDaemon = require('../src/ipfs-daemon')
 
 const dataDirectory = '/tmp/ipfs-daemon'
 const defaultIpfsDirectory = './ipfs'

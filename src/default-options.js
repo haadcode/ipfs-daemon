@@ -11,6 +11,8 @@ module.exports = {
     Swarm: ['/ip4/0.0.0.0/tcp/4001'],
     Gateway: '/ip4/0.0.0.0/tcp/8080'
   },
+  // WebRTC-Star Signal Server for js-ipfs
+  SignalServer: null,
   // Flags to pass to the IPFS daemon
   Flags: ['--enable-pubsub-experiment'] // Enable Pubsub by default
 }
