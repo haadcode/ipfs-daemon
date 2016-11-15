@@ -31299,7 +31299,7 @@ Logger.setLogLevel('DEBUG')
 
 const defaultOptions = __webpack_require__(389)
 
-class IpfsDaemon extends EventEmitter {
+class IpfsBrowserDaemon extends EventEmitter {
   constructor(options) {
     super()
 
@@ -31428,7 +31428,7 @@ class IpfsDaemon extends EventEmitter {
    
 }
 
-module.exports = IpfsDaemon
+module.exports = IpfsBrowserDaemon
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 

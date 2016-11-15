@@ -69,9 +69,11 @@ Then, before you can use it, you'll have to wait for the `ready` event to be emi
 
 ```javascript
 ipfs.on('ready', () => {
-  // IPFS API is now ready to be used from ipfs.ipfsApi
-  // eg. daemon.ipfsApi.files.add(..)
+  // IPFS API is now ready to be used
+  // eg. ipfs.files.add(..)
 })
+
+ipfs.on('error', (e) => console.log(e))
 ```
 
 ### Constructor
@@ -100,7 +102,8 @@ IpfsDaemon takes options as an argument where you can define various properties 
       "Access-Control-Allow-Methods": [], // "PUT", "GET", "POST", "DELETE", etc.
       "Access-Control-Allow-Credentials": [] // "true" || "false"
     } 
-  }
+  },
+  SignalServer: null // WebRTC sig-star server, browser only, eg. '127.0.0.1'
 }
 ```
 

@@ -12,7 +12,7 @@ Logger.setLogLevel('DEBUG')
 
 const defaultOptions = require('./default-options')
 
-class IpfsDaemon extends EventEmitter {
+class IpfsBrowserDaemon extends EventEmitter {
   constructor(options) {
     super()
 
@@ -141,4 +141,4 @@ class IpfsDaemon extends EventEmitter {
    
 }
 
-module.exports = IpfsDaemon
+module.exports = IpfsBrowserDaemon
