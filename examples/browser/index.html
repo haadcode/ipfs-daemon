@@ -1,0 +1,138 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <style>
+      @font-face {
+        font-family: 'Anonymous Pro';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Anonymous Pro'), local('AnonymousPro') format('truetype');
+      }
+
+      body {
+        font-family: 'Anonymous Pro', monospace;
+        font-size: 0.8em;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .output {
+        font-size: 1.5em;
+      }
+
+      .error {
+        color: red;
+      }
+
+      .daemon {
+        border: 1px dashed grey;
+        padding: 1em;
+      }
+
+    </style>
+  </head>
+  <body>
+    <label for="port">Port</label>
+    <input id="port" type="text" placeholder="Port" value="5001"/>
+    <br/>
+    <label for="dir">IPFS Data Directory</label>
+    <input id="dir" type="text" placeholder="IPFS data directory" value="/tmp/daemon"/>
+    <br/>
+    <br/>
+    <button id="start" type="button">Start</button>
+    <button id="stop" type="button">Stop</button>
+
+    <br/><br/>
+
+    <div class="daemon">
+      <div id="output" class="output">🔌 IPFS daemon stopped</div>
+      <div id="details" style="display: none;"></div>
+      <div id="peers" style="display: none;"></div>
+      <div id="errors" style="display: none;"></div>
+    </div>
+
+    <script type="text/javascript" src="lib/index.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      const startButton = document.getElementById("start")
+      const stopButton = document.getElementById("stop")
+      const output = document.getElementById("output")
+      const details = document.getElementById("details")
+      const peers = document.getElementById("peers")
+      const errors = document.getElementById("errors")
+      const portInput = document.getElementById("port")
+      const dirInput = document.getElementById("dir")
+
+      let ipfs, pollPeersInterval
+
+      const start = () => {
+        if (!ipfs) {
+          errors.innerHTML = ""
+          details.innerHTML = ""
+          output.innerHTML = "📡 IPFS daemon starting"
+
+          let opts = {
+            IpfsDataDir: dirInput.value,
+            SignalServer: '178.62.241.75',
+            Addresses: {
+              Swarm: ['/ip4/0.0.0.0/tcp/' + portInput.value],
+            }
+          }
+
+          ipfs = new IpfsDaemon(opts)
+          
+          ipfs.on('ready', () => {
+            output.innerHTML = " 🚀 IPFS daemon started"
+
+            // Output IPFS details
+            details.innerHTML =  "<br/>" + ipfs.PeerId + "<br/>" + dirInput.value + "<br/>" + opts.Addresses.Swarm[0]
+            details.removeAttribute("style")
+            details.style.fontSize = "0.8em"
+
+            // Poll for peers from IPFS and display them
+            pollPeersInterval = setInterval(() => {
+              ipfs.swarm.peers((err, res) => {
+                peers.removeAttribute("style")
+                peers.style.fontSize = "0.6em"
+                
+                const peerAsHtml = res
+                  .map((e, idx) => "<span>" + idx + ". " + e.toString() + "</span>")
+                  .join("<br/>")
+
+                peers.innerHTML =  "<br/>Peers:<br/>" + peerAsHtml
+              })
+            }, 1000)
+          })
+
+          ipfs.on('error', (e) => {
+            console.error(e)
+            errors.innerHTML = "<br/><span class='error'>" + e + "</span>"
+            errors.removeAttribute("style")
+          })          
+        }
+      }
+
+      const stop = () => {
+        if (ipfs) {
+          clearInterval(pollPeersInterval)
+          ipfs.stop()
+          output.innerHTML = "🔌 IPFS daemon stopped"
+          details.innerHTML = ""
+          errors.innerHTML = ""
+          peers.innerHTML = ""
+          ipfs = null
+        }
+      }
+
+      startButton.addEventListener('click', start)
+      stopButton.addEventListener('click', stop)
+      
+      errors.addEventListener('click', () => {
+        errors.innerHTML = ""
+      })
+
+    </script>
+  </body>
+</html>

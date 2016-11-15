@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const rmrf = require('rimraf')
 const assert = require('assert')
-const IpfsDaemon = require('../src/ipfs-daemon')
+const IpfsDaemon = require('../src/index.js')
 
 const dataDirectory = '/tmp/ipfs-daemon'
 const defaultIpfsDirectory = './ipfs'
@@ -14,11 +14,11 @@ const TIMEOUT = 60000
 const hasIpfsApi = (ipfs) => {
   return ipfs.object.get !== undefined
       && ipfs.object.put !== undefined
-      && ipfs.pubsub.pub !== undefined
-      && ipfs.pubsub.sub !== undefined
+      // && ipfs.pubsub.pub !== undefined
+      // && ipfs.pubsub.sub !== undefined
 }
 
-describe('ipfs-daemon', function () {
+describe('ipfs-browser-daemon', function () {
   this.timeout(TIMEOUT)
 
   describe('starts a daemon', () => {
@@ -27,8 +27,6 @@ describe('ipfs-daemon', function () {
       ipfs.on('error', done)
       ipfs.on('ready', () => {
         assert.equal(hasIpfsApi(ipfs), true)
-        assert.equal(ipfs.GatewayAddress, "0.0.0.0:8080/ipfs/")
-        assert.equal(ipfs.APIAddress, "127.0.0.1:5001")
         ipfs.stop()
         rmrf.sync(defaultIpfsDirectory)
         done()        
@@ -51,9 +49,9 @@ describe('ipfs-daemon', function () {
       ipfs.on('error', done)
       ipfs.on('ready', (res) => {
         assert.equal(hasIpfsApi(ipfs), true)
-        assert.equal(fs.existsSync(opts.IpfsDataDir), true)
-        assert.equal(ipfs.GatewayAddress.indexOf('60321') > -1, true)
-        assert.equal(ipfs.APIAddress.indexOf('60320') > -1, true)
+        // assert.equal(fs.existsSync(opts.IpfsDataDir), true)
+        assert.equal(ipfs.GatewayAddress, null)
+        // assert.equal(ipfs.APIAddress.indexOf('60320') > -1, true)
         ipfs.stop()
         rmrf.sync(dataDirectory)
         done()
@@ -127,39 +125,9 @@ describe('ipfs-daemon', function () {
       ipfs1.on('ready', (res) => {
         const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2 })
         ipfs2.on('error', (err) => {
-          const match = String(err).match('address already in use')
+          const match = String(err).match(/address already in use|EADDRINUSE/)
           assert.notEqual(err, null)
-          assert.equal(match[0], 'address already in use')
-          ipfs1.stop()
-          ipfs2.stop()
-          done()
-        })
-      })
-    })
-
-    it('emit s an error when Gateway address is already in use', (done) => {
-      const dir1 = dataDirectory + '/daemon1'
-      const dir2 = dataDirectory + '/daemon2'
-
-      const addr1 = {
-        API: '/ip4/127.0.0.1/tcp/0',
-        Gateway: '/ip4/0.0.0.0/tcp/8080',
-        Swarm: ['/ip4/0.0.0.0/tcp/0'],
-      }
-
-      const addr2 = {
-        API: '/ip4/127.0.0.1/tcp/0',
-        Gateway: '/ip4/0.0.0.0/tcp/8080',
-        Swarm: ['/ip4/0.0.0.0/tcp/0'],
-      }
-  
-      const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1, Addresses: addr1 })
-      ipfs1.on('ready', (res) => {
-        const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2, Addresses: addr2  })
-        ipfs2.on('error', (err) => {
-          const match = String(err).match('address already in use')
-          assert.notEqual(err, null)
-          assert.equal(match[0], 'address already in use')
+          assert.notEqual(match[0], undefined)
           ipfs1.stop()
           ipfs2.stop()
           done()
