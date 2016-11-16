@@ -13,11 +13,11 @@
     "test:node:core": "TEST=core npm run test:node",
     "test:node:http": "TEST=http npm run test:node",
     "test:node:cli": "TEST=cli npm run test:node",
-    "test:browser": "PHANTOM=off gulp test:browser",
+    "test:browser": "gulp test:browser",
     "build": "gulp build",
-    "release": "PHANTOM=off gulp release",
-    "release-minor": "PHANTOM=off gulp release --type minor",
-    "release-major": "PHANTOM=off gulp release --type major",
+    "release": "gulp release",
+    "release-minor": "gulp release --type minor",
+    "release-major": "gulp release --type major",
     "coverage-publish": "aegir-coverage publish"
   },
   "repository": {
@@ -35,10 +35,9 @@
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
-    "aegir": "^9.1.1",
+    "aegir": "^9.1.2",
     "mocha": "^3.1.0",
     "rimraf": "^2.5.4",
-    "typescript": "^2.0.9",
-    "webpack": "2.1.0-beta.25"
+    "typescript": "^2.0.9"
   }
 }
