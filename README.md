@@ -1,5 +1,8 @@
 # ipfs-daemon
 
+[![npm version](https://badge.fury.io/js/ipfs-daemon.svg)](https://badge.fury.io/js/ipfs-daemon)
+[![CircleCI](https://circleci.com/gh/haadcode/ipfs-daemon.svg?style=shield)](https://circleci.com/gh/haadcode/ipfs-daemon)
+
 > Get a running IPFS daemon quickly in your Node.js code
 
 This module provides a quick way to get an [IPFS](https://ipfs.io) daemon up and running in your Node.js program. It will initialize and start a [go-ipfs](https://github.com/ipfs/go-ipfs) process that can then be called via various APIs. 
@@ -7,8 +10,6 @@ This module provides a quick way to get an [IPFS](https://ipfs.io) daemon up and
 Internally ipfs-daemon uses [ipfsd-ctl](https://github.com/ipfs/js-ipfsd-ctl), [js-ipfs-api](https://github.com/ipfs/js-ipfs-api) and [go-ipfs-dep](https://github.com/haadcode/go-ipfs-dep) modules.
 
 *Please note that `ipfs-daemon` currently uses a custom version of go-ipfs binary called [floodsub-2](https://dist.ipfs.io/go-ipfs/floodsub-2) which is required to make sure Pubsub API works.*
-
-[![CircleCI](https://circleci.com/gh/haadcode/ipfs-daemon.svg?style=shield)](https://circleci.com/gh/haadcode/ipfs-daemon)
 
 **Notes** 
 - *Possibility to use with `js-ipfs` is on the TODO list.*
