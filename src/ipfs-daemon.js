@@ -101,9 +101,9 @@ class IpfsDaemon extends EventEmitter {
         if (err)
           return reject(err)
 
-        // this.GatewayAddress = this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : 'localhost:8080/ipfs/'       
-        // Object.assign(this, IpfsApi(ipfs.apiHost, ipfs.apiPort))
+        // Assign the IPFS api to this
         Object.assign(this, ipfs)
+
         logger.debug("Gateway listening at", this.GatewayAddress)
         logger.debug("IPFS daemon started at", this.APIAddress)
 
