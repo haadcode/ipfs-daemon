@@ -1,9 +1,6 @@
 'use strict'
 
-// const fs = require('fs')
-// const mkdirp = require('mkdirp')
 const path = require('path')
-const assert = require('assert')
 const EventEmitter = require('events').EventEmitter
 const IPFS = require('ipfs')
 const Logger = require('logplease')
