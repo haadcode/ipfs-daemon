@@ -14,9 +14,6 @@ class IpfsDaemon extends EventEmitter {
   constructor(options) {
     super()
 
-    this.GatewayAddress = null
-    this.APIAddress = null
-
     let opts = Object.assign({}, defaultOptions)
     Object.assign(opts, options)
     this._options = opts
@@ -56,6 +53,14 @@ class IpfsDaemon extends EventEmitter {
     this._handleShutdown()
   }
 
+  get GatewayAddress() {
+    return this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
+  }
+
+  get APIAddress() {
+    return (this.apiHost && this.apiPort) ? this.apiHost + ':' + this.apiPort : null
+  }
+
   _initDaemon() {
     return new Promise((resolve, reject) => {
       ipfsd.local(this._options.IpfsDataDir, this._options, (err, node) => {
@@ -74,7 +79,7 @@ class IpfsDaemon extends EventEmitter {
 
             if (migrationNeeded) {
               let errStr = `Error initializing IPFS daemon: '${migrationNeeded[0]}'\n`
-              errStr += `Tried to init IPFS repo at '${opts.IpfsDataDir}', but failed.\n`
+              errStr += `Tried to init IPFS repo at '${this._options.IpfsDataDir}', but failed.\n`
               errStr += `Use $IPFS_PATH to specify another repo path, eg. 'export IPFS_PATH=/tmp/orbit-floodsub'.`
 
               errStr.split('\n').forEach((e) => logger.error(e))
@@ -96,16 +101,10 @@ class IpfsDaemon extends EventEmitter {
         if (err)
           return reject(err)
 
-        // this.GatewayAddress = this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : 'localhost:8080/ipfs/'
-        if (this._daemon.gatewayAddr) {
-          this.GatewayAddress = this._daemon.gatewayAddr + '/ipfs/'
-          logger.debug("Gateway listening at", this.GatewayAddress)
-        }
-
-        this.APIAddress = ipfs.apiHost + ':' + ipfs.apiPort
-        
+        // this.GatewayAddress = this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : 'localhost:8080/ipfs/'       
         // Object.assign(this, IpfsApi(ipfs.apiHost, ipfs.apiPort))
         Object.assign(this, ipfs)
+        logger.debug("Gateway listening at", this.GatewayAddress)
         logger.debug("IPFS daemon started at", this.APIAddress)
 
         resolve(ipfs)
@@ -117,8 +116,6 @@ class IpfsDaemon extends EventEmitter {
   _handleShutdown() {
     logger.debug("Shutting down...")
     this._daemon.stopDaemon()
-    this.GatewayAddress = null
-    this.APIAddress = null
     this._options = null
     this._daemon = null
     process.removeAllListeners('SIGINT')

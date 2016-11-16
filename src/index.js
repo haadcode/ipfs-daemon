@@ -16,8 +16,6 @@ class IpfsBrowserDaemon extends EventEmitter {
   constructor(options) {
     super()
 
-    this.GatewayAddress = null
-    this.APIAddress = null
     this.PeerId = null
 
     let opts = Object.assign({}, defaultOptions)
@@ -26,10 +24,6 @@ class IpfsBrowserDaemon extends EventEmitter {
 
     // Daemon that gets returned by ipfsd-ctl
     this._daemon = null
-
-    // Make sure we have the app data directory
-    // if (!fs.existsSync(this._options.IpfsDataDir))
-    //   mkdirp.sync(this._options.IpfsDataDir)
 
     // Setup logfiles
     Logger.setLogfile(path.join(this._options.LogDirectory, '/ipfs-daemon.log'))
@@ -59,6 +53,14 @@ class IpfsBrowserDaemon extends EventEmitter {
 
   stop() {
     this._handleShutdown()
+  }
+
+  get GatewayAddress() {
+    return "0.0.0.0:8080/ipfs/"//this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
+  }
+
+  get APIAddress() {
+    return this._options.Addresses.Swarm//(this.apiHost && this.apiPort) ? this.apiHost + ':' + this.apiPort : null
   }
 
   _initDaemon() {
@@ -105,12 +107,6 @@ class IpfsBrowserDaemon extends EventEmitter {
         if (err)
           return reject(err)
 
-        if (this._daemon.gatewayAddr) {
-          this.GatewayAddress = this._daemon.gatewayAddr + '/ipfs/'
-          logger.debug("Gateway listening at", this.GatewayAddress)          
-        }
-
-        // this.APIAddress = this._daemon.apiMultiaddr + ':' + this._daemon.apiMultiaddr
         Object.assign(this, this._daemon)
         logger.debug("IPFS daemon started")
 
@@ -126,8 +122,6 @@ class IpfsBrowserDaemon extends EventEmitter {
     if(this._daemon && this._daemon.isOnline())
       this._daemon.goOffline()
 
-    this.GatewayAddress = null
-    this.APIAddress = null
     this.PeerId = null
     this._options = null
     this._daemon = null
