@@ -59,6 +59,7 @@ When used in Node.js, the available functionality is described in [js-ipfs-api](
 
 When used in the browser, the available functionality is described in [js-ipfs](https://github.com/ipfs/js-ipfs#api) documentation.
 
+- [Getting Started](#getting-started)
 - [Constructor](#constructor)
   - [new IpfsDaemon](#new-ipfsdaemonoptions)
 - [Methods](#methods)
@@ -79,7 +80,7 @@ In order to use an IPFS daemon, you first need to require the module in your pro
 const IPFS = require('ipfs-daemon')
 ```
 
-And then instantiate an `IPFS` object. You can pass options to the constructor, see [options](#options) for details.
+And then instantiate an `IPFS` object. You can pass options to the constructor, see [options](#new-ipfsdaemonoptions) for details.
 
 ```javascript
 const ipfs = new IPFS(options)
