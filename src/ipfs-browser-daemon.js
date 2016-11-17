@@ -1,55 +1,19 @@
 'use strict'
 
 const path = require('path')
-const EventEmitter = require('events').EventEmitter
 const IPFS = require('ipfs')
+const IpfsDaemon = require('./ipfs-daemon.js')
+
 const Logger = require('logplease')
 const logger = Logger.create("ipfs-daemon")
-Logger.setLogLevel('DEBUG')
+Logger.setLogLevel('NONE')
 
-const defaultOptions = require('./default-options')
-
-class IpfsBrowserDaemon extends EventEmitter {
+class IpfsBrowserDaemon extends IpfsDaemon {
   constructor(options) {
-    super()
-
-    this.PeerId = null
-
-    let opts = Object.assign({}, defaultOptions)
-    Object.assign(opts, options)
-    this._options = opts
-
-    // Daemon that gets returned by ipfsd-ctl
-    this._daemon = null
-
-    // Setup logfiles
-    Logger.setLogfile(path.join(this._options.LogDirectory, '/ipfs-daemon.log'))
-
-    // Handle shutdown signals
-    process.on('SIGINT', () => this._handleShutdown)
-    process.on('SIGTERM', () => this._handleShutdown)
-
-    // Log errors
-    process.on('uncaughtException', (error) => {
-      // Skip 'ctrl-c' error and shutdown gracefully
-      const match = String(error).match(/non-zero exit code 255/)
-      if(match)
-        this._handleShutdown()
-      else
-        logger.error(error)
-    })
+    super(options)
 
     // Initialize and start the daemon
-    this._initDaemon()
-      .then(() => this._startDaemon())
-      .then(() => this.emit('ready'))
-      .catch((e) => {
-        this.emit('error', e)
-      })
-  }
-
-  stop() {
-    this._handleShutdown()
+    super._start()
   }
 
   get GatewayAddress() {
@@ -70,8 +34,6 @@ class IpfsBrowserDaemon extends EventEmitter {
         this._daemon.config.get((err, config) => {
           if (err)
             return reject(err)
-
-          this.PeerId = config.Identity.PeerID
 
           if (this._options.SignalServer) {
              // Add at least one libp2p-webrtc-star address. Without an address like this
@@ -104,32 +66,24 @@ class IpfsBrowserDaemon extends EventEmitter {
         if (err)
           return reject(err)
 
-        Object.assign(this, this._daemon)
-        logger.debug("IPFS daemon started")
-
-        resolve()
+        this._daemon.id((err, id) => {
+          this._peerId = id.id
+          // Assign the IPFS api to this
+          Object.assign(this, this._daemon)
+          logger.debug("IPFS daemon started")
+          resolve()
+        })
       })
     })
   }
 
   // Handle shutdown gracefully
   _handleShutdown() {
-    logger.debug("Shutting down...")
-    
     if(this._daemon && this._daemon.isOnline())
       this._daemon.goOffline()
 
-    this.PeerId = null
-    this._options = null
-    this._daemon = null
-
-    process.removeAllListeners('SIGINT')
-    process.removeAllListeners('SIGTERM')
-    process.removeAllListeners('uncaughtException')
-
-    logger.debug("IPFS daemon stopped")
-  } 
-   
+    super._handleShutdown()
+  }   
 }
 
 module.exports = IpfsBrowserDaemon

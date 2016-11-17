@@ -4,8 +4,8 @@ const fs = require('fs')
 const path = require('path')
 const rmrf = require('rimraf')
 const assert = require('assert')
-const IpfsNativeDaemon = require('../src/ipfs-daemon')
-const IpfsBrowserDaemon = require('../src/index.js')
+const IpfsNativeDaemon = require('../src/ipfs-native-daemon')
+const IpfsBrowserDaemon = require('../src/ipfs-browser-daemon.js')
 
 const dataDirectory = '/tmp/ipfs-daemon'
 const defaultIpfsDirectory = './ipfs'
@@ -76,6 +76,17 @@ const hasIpfsApi = (ipfs) => {
           })
         })
       })
+
+      it('sets PeerId', (done) => {
+        const ipfs = new IpfsDaemon()
+        ipfs.on('error', done)
+        ipfs.on('ready', () => {
+          assert.notEqual(ipfs.PeerId, null)
+          ipfs.stop()
+          rmrf.sync(defaultIpfsDirectory)
+          done()        
+        })
+      })
     })
 
     describe('starts', () => {
@@ -131,6 +142,22 @@ const hasIpfsApi = (ipfs) => {
             const match = String(err).match(/address already in use|EADDRINUSE/)
             assert.notEqual(err, null)
             // assert.equal(match[0], 'address already in use')
+            ipfs1.stop()
+            ipfs2.stop()
+            done()
+          })
+        })
+      })
+
+      it('doesn\'t set PeerId if start daemon errors', (done) => {
+        const dir1 = dataDirectory + '/daemon1'
+        const dir2 = dataDirectory + '/daemon2'
+    
+        const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1 })
+        ipfs1.on('ready', (res) => {
+          const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2 })
+          ipfs2.on('error', (err) => {
+            assert.equal(ipfs2.PeerId, null)
             ipfs1.stop()
             ipfs2.stop()
             done()

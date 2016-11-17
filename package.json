@@ -2,8 +2,7 @@
   "name": "ipfs-daemon",
   "version": "0.2.0",
   "description": "Get a running IPFS daemon quickly and easily",
-  "main": "src/ipfs-daemon.js",
-  "jsnext:main": "src/index.js",
+  "main": "src/ipfs-native-daemon.js",
   "scripts": {
     "postinstall": "./scripts/post_install.sh",
     "lint": "aegir-lint",
