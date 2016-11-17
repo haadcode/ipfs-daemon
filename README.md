@@ -3,33 +3,20 @@
 [![npm version](https://badge.fury.io/js/ipfs-daemon.svg)](https://badge.fury.io/js/ipfs-daemon)
 [![CircleCI](https://circleci.com/gh/haadcode/ipfs-daemon.svg?style=shield)](https://circleci.com/gh/haadcode/ipfs-daemon)
 
-> Get a running IPFS daemon quickly in your Node.js code
+> Get a running IPFS daemon quickly with Javascript
 
-This module provides a quick way to get an [IPFS](https://ipfs.io) daemon up and running in your Node.js program. It will initialize and start a [go-ipfs](https://github.com/ipfs/go-ipfs) process that can then be called via various APIs. 
-
-Internally ipfs-daemon uses [ipfsd-ctl](https://github.com/ipfs/js-ipfsd-ctl), [js-ipfs-api](https://github.com/ipfs/js-ipfs-api) and [go-ipfs-dep](https://github.com/haadcode/go-ipfs-dep) modules.
-
-*Please note that `ipfs-daemon` currently uses a custom version of go-ipfs binary called [floodsub-2](https://dist.ipfs.io/go-ipfs/floodsub-2) which is required to make sure Pubsub API works.*
-
-**Notes** 
-- *Possibility to use with `js-ipfs` is on the TODO list.*
+This module provides a quick way to get an [IPFS](https://ipfs.io) daemon up and running in your Javascript program. It works with both **Node.js** and the **browsers**. 
 
 ## Table of Contents
 
 - [Install](#install)
 - [Usage](#usage)
+- [Examples](#examples)
 - [API](#api)
-  - [Constructor](#constructor)
-    - [new IpfsDaemon](#new-ipfsdaemonoptions)
-  - [Methods](#methods)
-    - [stop](#stop)
-  - [Properties](#properties)
-    - [GatewayAddress](#gatewayaddress)
-    - [APIAddress](#apiaddress)
-  - [Events](#events)
-    - [ready](#ready)
-    - [error](#error)
-- [Logging](#logging)
+- [Development](#development)
+- [Background](#background)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Install
 ```
@@ -40,7 +27,7 @@ npm install ipfs-daemon
 
 ```javascript
   const IPFS = require('ipfs-daemon')
-  const ipfs = new IPFS(options)
+  const ipfs = new IPFS()
 
   ipfs.on('ready', () => {
     // IPFS is now ready to be used
@@ -50,9 +37,41 @@ npm install ipfs-daemon
   ipfs.on('error', (e) => console.error(err))
 ```
 
-See [js-ipfs-api API documentation](https://github.com/ipfs/js-ipfs-api#api) for using the IPFS API.
+See [API documentation](#api) for details.
+
+## Examples
+
+You can find a simple **Node.js** example in [examples/native.js](https://github.com/haadcode/ipfs-daemon/blob/master/examples/native.js). You can run it with:
+
+```
+node examples/native.js
+```
+
+You can find a **browser** example in [examples/browser/index.html](https://github.com/haadcode/ipfs-daemon/blob/master/examples/browser/index.html). You can run it by opening the file in a browser. 
+
+*Note! Browser example currently only works in Chrome.*
 
 ## API
+
+In addition to the API documented here, `ipfs-daemon` makes the IPFS API available at the top level of the instantiated object. 
+
+When used in Node.js, the available functionality is described in [js-ipfs-api](https://github.com/ipfs/js-ipfs-api#api) documentation. 
+
+When used in the browser, the available functionality is described in [js-ipfs](https://github.com/ipfs/js-ipfs#api) documentation.
+
+- [Constructor](#constructor)
+  - [new IpfsDaemon](#new-ipfsdaemonoptions)
+- [Methods](#methods)
+  - [stop](#stop)
+- [Properties](#properties)
+  - [PeerId](#peerid)
+  - [GatewayAddress](#gatewayaddress)
+  - [APIAddress](#apiaddress)
+- [Events](#events)
+  - [ready](#ready)
+  - [error](#error)
+
+### Getting Started
 
 In order to use an IPFS daemon, you first need to require the module in your project:
 
@@ -79,13 +98,13 @@ ipfs.on('error', (e) => console.log(e))
 
 ### Constructor
 
-#### new IpfsDaemon(options)
+#### new IpfsDaemon([options])
 
 ```javascript
 const ipfs = new IPFS(options)
 ```
 
-IpfsDaemon takes options as an argument where you can define various properties for the IPFS daemon. Default options are:
+IpfsDaemon takes `options` as an *optional* argument where you can define various properties for the IPFS daemon. Default options are:
 
 ```javascript
 {
@@ -119,6 +138,14 @@ ipfs.stop()
 ```
 
 ### Properties
+
+#### PeerId
+
+The Peer ID of the IPFS daemon.
+
+```javascript
+ipfs.PeerId // 'QmSUs7xtkm4yTZpashfjJZvptNZAAzahJjDbRcnGL43BzH'
+```
 
 #### GatewayAddress
 
@@ -158,6 +185,41 @@ Emitted when an error occurs in IPFS.
 ipfs.on('error', (e) => console.error(err))
 ```
 
-## Logging
+## Development
 
-To turn on *DEBUG* logging, set `LOG` environment variable to `debug`, eg. `export LOG=debug`. Default LOG level is `ERROR`.
+#### Setup
+```
+git clone https://github.com/haadcode/ipfs-daemon.git
+cd ipfs-daemon/
+npm install
+```
+
+#### Run Tests
+```
+npm test
+```
+
+#### Build
+```
+npm run build
+```
+
+## Background
+
+Currently existing modules for IPFS require multiple steps and knowledge how to get an IPFS daemon started. Furthermore, some of the required steps are not documented, making it hard to get started with Javacript and IPFS. This module was written to provide an easy way to get IPFS up and running.
+
+In Node.js, `ipfs-daemon` will initialize and start a detached [go-ipfs](https://github.com/ipfs/go-ipfs) process that can then be called via the [API](#api). Internally the Node.js version uses [ipfsd-ctl](https://github.com/ipfs/js-ipfsd-ctl), [js-ipfs-api](https://github.com/ipfs/js-ipfs-api) and [go-ipfs-dep](https://github.com/haadcode/go-ipfs-dep) modules. Please note that `ipfs-daemon` currently uses a custom version of go-ipfs binary called [floodsub-2](https://dist.ipfs.io/go-ipfs/floodsub-2) which is required to make sure Pubsub API works.
+
+In the browsers, `ipfs-daemon` will start a [js-ipfs](https://github.com/ipfs/js-ipfs) instance which can be used via the [API](#api).
+
+## Contributing
+
+[![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
+
+I would be happy to accept PRs! If something is not working, opening a [new issue](https://github.com/haadcode/ipfs-daemon/issues/new) would be highly appreciated.
+
+You can reach me on IRC #ipfs on Freenode, or by opening an [issue](https://github.com/haadcode/ipfs-daemon/issues).
+
+## License
+
+[MIT](LICENSE) ©️ 2016 Haadcode
