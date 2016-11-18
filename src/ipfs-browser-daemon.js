@@ -1,11 +1,10 @@
 'use strict'
 
-const path = require('path')
 const IPFS = require('ipfs')
 const IpfsDaemon = require('./ipfs-daemon.js')
 
 const Logger = require('logplease')
-const logger = Logger.create("ipfs-daemon")
+const logger = Logger.create('ipfs-daemon')
 Logger.setLogLevel('NONE')
 
 class IpfsBrowserDaemon extends IpfsDaemon {
@@ -17,7 +16,7 @@ class IpfsBrowserDaemon extends IpfsDaemon {
   }
 
   get GatewayAddress() {
-    return "0.0.0.0:8080/ipfs/"//this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
+    return '0.0.0.0:8080/ipfs/'//this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
   }
 
   get APIAddress() {
@@ -61,7 +60,7 @@ class IpfsBrowserDaemon extends IpfsDaemon {
 
   _startDaemon() {
     return new Promise((resolve, reject) => {
-      logger.debug("Starting IPFS daemon")
+      logger.debug('Starting IPFS daemon')
       this._daemon.goOnline((err) => {
         if (err)
           return reject(err)
@@ -70,7 +69,7 @@ class IpfsBrowserDaemon extends IpfsDaemon {
           this._peerId = id.id
           // Assign the IPFS api to this
           Object.assign(this, this._daemon)
-          logger.debug("IPFS daemon started")
+          logger.debug('IPFS daemon started')
           resolve()
         })
       })
@@ -79,7 +78,7 @@ class IpfsBrowserDaemon extends IpfsDaemon {
 
   // Handle shutdown gracefully
   _handleShutdown() {
-    if(this._daemon && this._daemon.isOnline())
+    if (this._daemon && this._daemon.isOnline())
       this._daemon.goOffline()
 
     super._handleShutdown()

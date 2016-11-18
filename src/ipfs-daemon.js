@@ -4,7 +4,7 @@ const defaultOptions = require('./default-options')
 const path = require('path')
 const EventEmitter = require('events').EventEmitter
 const Logger = require('logplease')
-const logger = Logger.create("ipfs-daemon")
+const logger = Logger.create('ipfs-daemon')
 Logger.setLogLevel('NONE')
 
 class IpfsDaemon extends EventEmitter {
@@ -70,15 +70,15 @@ class IpfsDaemon extends EventEmitter {
   }
 
   _initDaemon() {
-    throw new Error("_initDaemon() not implemented")
+    throw new Error('_initDaemon() not implemented')
   }
 
   _startDaemon() {
-    throw new Error("_startDaemon() not implemented")
+    throw new Error('_startDaemon() not implemented')
   }
 
   _handleShutdown() {
-    logger.debug("Shutting down...")
+    logger.debug('Shutting down...')
     
     this._options = null
     this._daemon = null
@@ -88,8 +88,8 @@ class IpfsDaemon extends EventEmitter {
     process.removeAllListeners('SIGTERM')
     process.removeAllListeners('uncaughtException')
 
-    logger.debug("IPFS daemon finished")
-  } 
+    logger.debug('IPFS daemon finished')
+  }
 }
 
 module.exports = IpfsDaemon
