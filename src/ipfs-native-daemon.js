@@ -23,6 +23,9 @@ class IpfsNativeDaemon extends IpfsDaemon {
   }
 
   _initDaemon() {
+    if (this._options.useRunningDaemon)
+      return Promise.resolve()
+
     return new Promise((resolve, reject) => {
       ipfsd.local(this._options.IpfsDataDir, this._options, (err, node) => {
         if(err) 
@@ -56,11 +59,47 @@ class IpfsNativeDaemon extends IpfsDaemon {
   }
 
   _startDaemon() {
+    if (this._options.useRunningDaemon) {
+      const host = this._options.useRunningDaemon.split(':')[0]
+      const port = this._options.useRunningDaemon.split(':')[1]
+      logger.debug("Try using IPFS daemon at '" + this._options.useRunningDaemon + "'")
+      const ipfs = this._options.ipfsAPI(host, port)
+      return new Promise((resolve, reject) => {
+
+        ipfs.id((err, id) => {
+          if (err) {
+            const err = `Couldn't find IPFS daemon at '${this._options.useRunningDaemon}'`
+            logger.error(err)
+            return reject(new Error(err))
+          }
+
+          this._peerId = id.id
+
+          // Assign the IPFS api to this
+          Object.assign(this, ipfs)
+
+          logger.debug(`Found IPFS daemon at '${this._options.useRunningDaemon}'`)
+          resolve()
+        })        
+      })
+    }
+
     return new Promise((resolve, reject) => {
       logger.debug("Starting IPFS daemon")
       this._daemon.startDaemon(this._options.Flags, (err, ipfs) => {
         if (err)
           return reject(err)
+
+
+        if (this._options.ipfsAPI) {
+          const apiHost = ipfs.apiHost
+          const apiPort = ipfs.apiPort
+
+          ipfs = this._options.ipfsAPI(ipfs.apiHost, ipfs.apiPort)
+          
+          ipfs.apiHost = apiHost
+          ipfs.apiPort = apiPort
+        }
 
         ipfs.id((err, id) => {
           this._peerId = id.id
