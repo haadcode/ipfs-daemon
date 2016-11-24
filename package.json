@@ -26,10 +26,9 @@
   "author": "Haad",
   "license": "MIT",
   "dependencies": {
-    "go-ipfs-dep": "https://github.com/haadcode/go-ipfs-dep.git",
     "ipfs": "^0.18.0",
     "ipfs-api": "https://github.com/haadcode/js-ipfs-api.git",
-    "ipfsd-ctl": "https://github.com/haadcode/js-ipfsd-ctl.git",
+    "@haad/ipfsd-ctl": "^0.18.0-pre3",
     "logplease": "^1.2.9",
     "mkdirp": "^0.5.1"
   },
