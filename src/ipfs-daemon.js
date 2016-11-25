@@ -17,6 +17,7 @@ class IpfsDaemon extends EventEmitter {
     this._options = opts
     this._daemon = null
     this._peerId = null
+    this._name = 'ipfs-daemon'
 
     Logger.setLogfile(path.join(this._options.LogDirectory, '/ipfs-daemon.log'))
 
@@ -33,6 +34,10 @@ class IpfsDaemon extends EventEmitter {
       else
         logger.error(error)
     })
+  }
+
+  get Name() {
+    return this._name
   }
 
   get Options() {

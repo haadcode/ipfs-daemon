@@ -14,6 +14,8 @@ class IpfsNativeDaemon extends IpfsDaemon {
   constructor(options) {
     super(options)
 
+    this._name = 'js-ipfs-api+go-ipfs'
+
     // Make sure we have the app data directory
     if (!fs.existsSync(this._options.IpfsDataDir))
       mkdirp.sync(this._options.IpfsDataDir)
