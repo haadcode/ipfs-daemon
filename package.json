@@ -26,7 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "ipfs": "^0.18.0",
-    "@haad/ipfsd-ctl": "0.18.0-beta.1",
+    "@haad/ipfsd-ctl": "^0.18.0-beta.2",
     "logplease": "^1.2.9",
     "mkdirp": "^0.5.1"
   },
