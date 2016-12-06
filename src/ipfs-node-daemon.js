@@ -1,16 +1,22 @@
 'use strict'
 
+const fs = require('fs')
+const mkdirp = require('mkdirp')
 const IPFS = require('ipfs')
 const IpfsDaemon = require('./ipfs-daemon.js')
 
 const Logger = require('logplease')
-const logger = Logger.create('ipfs-daemon', { useColors: false, showTimestamp: false })
+const logger = Logger.create('ipfs-daemon')
 Logger.setLogLevel('NONE')
 
-class IpfsBrowserDaemon extends IpfsDaemon {
+class IpfsNodeDaemon extends IpfsDaemon {
   constructor(options) {
-    // Initialize and start the daemon
     super(options)
+
+    // Make sure we have the app data directory
+    if (!fs.existsSync(this._options.IpfsDataDir))
+      mkdirp.sync(this._options.IpfsDataDir)
+
     super._start()
   }
 
@@ -84,5 +90,5 @@ class IpfsBrowserDaemon extends IpfsDaemon {
   }   
 }
 
-IpfsBrowserDaemon.Name = 'js-ipfs-browser'
-module.exports = IpfsBrowserDaemon
+IpfsNodeDaemon.Name = 'js-ipfs'
+module.exports = IpfsNodeDaemon

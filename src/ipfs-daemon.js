@@ -4,7 +4,7 @@ const defaultOptions = require('./default-options')
 const path = require('path')
 const EventEmitter = require('events').EventEmitter
 const Logger = require('logplease')
-const logger = Logger.create('ipfs-daemon')
+const logger = Logger.create('ipfs-daemon', { useColors: false })
 Logger.setLogLevel('NONE')
 
 class IpfsDaemon extends EventEmitter {
@@ -17,28 +17,28 @@ class IpfsDaemon extends EventEmitter {
     this._options = opts
     this._daemon = null
     this._peerId = null
-    this._name = 'ipfs-daemon'
+    // this._name = 'ipfs-daemon'
 
     Logger.setLogfile(path.join(this._options.LogDirectory, '/ipfs-daemon.log'))
 
-    // Handle shutdown signals
-    process.on('SIGINT', () => this._handleShutdown)
-    process.on('SIGTERM', () => this._handleShutdown)
+    // // Handle shutdown signals
+    // process.on('SIGINT', () => this._handleShutdown)
+    // process.on('SIGTERM', () => this._handleShutdown)
 
-    // Log errors
-    process.on('uncaughtException', (error) => {
-      // Skip 'ctrl-c' error and shutdown gracefully
-      const match = String(error).match(/non-zero exit code 255/)
-      if(match)
-        this._handleShutdown()
-      else
-        logger.error(error)
-    })
+    // // Log errors
+    // process.on('uncaughtException', (error) => {
+    //   // Skip 'ctrl-c' error and shutdown gracefully
+    //   const match = String(error).match(/non-zero exit code 255/)
+    //   if(match)
+    //     this._handleShutdown()
+    //   else
+    //     logger.error(error)
+    // })
   }
 
-  get Name() {
-    return this._name
-  }
+  // get Name() {
+  //   return this._name
+  // }
 
   get Options() {
     return this._options
@@ -97,4 +97,5 @@ class IpfsDaemon extends EventEmitter {
   }
 }
 
+IpfsDaemon.Name = 'ipfs-daemon'
 module.exports = IpfsDaemon
