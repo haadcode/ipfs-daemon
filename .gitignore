@@ -2,3 +2,5 @@ node_modules/
 *sublime*
 dist/*.map
 ipfs/
+**/*.log
+dist
