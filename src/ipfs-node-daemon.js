@@ -10,52 +10,55 @@ const logger = Logger.create('ipfs-daemon')
 Logger.setLogLevel('NONE')
 
 class IpfsNodeDaemon extends IpfsDaemon {
-  constructor(options) {
+  constructor (options) {
     super(options)
 
     // Make sure we have the app data directory
-    if (!fs.existsSync(this._options.IpfsDataDir))
-      mkdirp.sync(this._options.IpfsDataDir)
+    if (!fs.existsSync(this._options.IpfsDataDir)) { mkdirp.sync(this._options.IpfsDataDir) }
 
     super._start()
   }
 
-  get GatewayAddress() {
-    return '0.0.0.0:8080/ipfs/'//this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
+  get GatewayAddress () {
+    return '0.0.0.0:8080/ipfs/'// this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
   }
 
-  get APIAddress() {
-    return this._options.Addresses.Swarm//(this.apiHost && this.apiPort) ? this.apiHost + ':' + this.apiPort : null
+  get APIAddress () {
+    return this._options.Addresses.Swarm// (this.apiHost && this.apiPort) ? this.apiHost + ':' + this.apiPort : null
   }
 
-  _initDaemon() {
+  _initDaemon () {
     return new Promise((resolve, reject) => {
       this._daemon = new IPFS(this._options.IpfsDataDir)
       this._daemon.init({ emptyRepo: true, bits: 2048 }, (err) => {
-        if (err && err.message !== 'repo already exists') 
+        if (err && err.message !== 'repo already exists') {
           return reject(err)
+        }
 
         this._daemon.config.get((err, config) => {
-          if (err)
+          if (err) {
             return reject(err)
+          }
 
           if (this._options.SignalServer) {
              // Add at least one libp2p-webrtc-star address. Without an address like this
              // the libp2p-webrtc-star transport won't be installed, and the resulting
              // node won't be able to dial out to libp2p-webrtc-star addresses.
             const signalServer = ('/libp2p-webrtc-star/ip4/' + this._options.SignalServer + '/tcp/9090/ws/ipfs/' + config.Identity.PeerID)
-            this._options.Addresses.Swarm = [signalServer]            
+            this._options.Addresses.Swarm = [signalServer]
           }
 
           this._daemon.config.set('Addresses', this._options.Addresses, (err) => {
-            if (err)
+            if (err) {
               return reject(err)
+            }
 
             this._daemon.load((err) => {
-              if (err)
+              if (err) {
                 reject(err)
-              else
-                resolve()            
+              } else {
+                resolve()
+              }
             })
           })
         })
@@ -63,12 +66,11 @@ class IpfsNodeDaemon extends IpfsDaemon {
     })
   }
 
-  _startDaemon() {
+  _startDaemon () {
     return new Promise((resolve, reject) => {
       logger.debug('Starting IPFS daemon')
       this._daemon.goOnline((err) => {
-        if (err)
-          return reject(err)
+        if (err) { return reject(err) }
 
         this._daemon.id((err, id) => {
           this._peerId = id.id
@@ -82,12 +84,13 @@ class IpfsNodeDaemon extends IpfsDaemon {
   }
 
   // Handle shutdown gracefully
-  _handleShutdown() {
-    if (this._daemon && this._daemon.isOnline())
+  _handleShutdown () {
+    if (this._daemon && this._daemon.isOnline()) {
       this._daemon.goOffline()
+    }
 
     super._handleShutdown()
-  }   
+  }
 }
 
 IpfsNodeDaemon.Name = 'js-ipfs'

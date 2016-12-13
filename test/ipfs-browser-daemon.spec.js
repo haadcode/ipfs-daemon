@@ -31,7 +31,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           // assert.equal(ipfs.GatewayAddress, "0.0.0.0:8080/ipfs/")
           // assert.equal(ipfs.APIAddress, "127.0.0.1:5001")
           ipfs.stop()
-          done()        
+          done()
         })
       })
 
@@ -43,7 +43,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           Addresses: {
             API: '/ip4/127.0.0.1/tcp/60320',
             Gateway: '/ip4/0.0.0.0/tcp/60321',
-            Swarm: ['/ip4/0.0.0.0/tcp/60322'],
+            Swarm: ['/ip4/0.0.0.0/tcp/60322']
           }
         }
 
@@ -80,7 +80,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
         ipfs.on('ready', () => {
           assert.notEqual(ipfs.PeerId, null)
           ipfs.stop()
-          done()        
+          done()
         })
       })
     })
@@ -89,24 +89,24 @@ const hasIpfsApiWithPubsub = (ipfs) => {
       it('two daemons', (done) => {
         const dir1 = dataDirectory + '/daemon1'
         const dir2 = dataDirectory + '/daemon2'
-        let started  = 0, res1, res2
+        let started = 0, res1, res2
 
         let addresses = {
           API: '/ip4/127.0.0.1/tcp/0',
           Gateway: '/ip4/0.0.0.0/tcp/0',
-          Swarm: ['/ip4/0.0.0.0/tcp/0'],
+          Swarm: ['/ip4/0.0.0.0/tcp/0']
         }
 
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1, Addresses: addresses })
         ipfs1.on('error', done)
-        ipfs1.on('ready', () => started ++)
+        ipfs1.on('ready', () => started++)
 
         const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2, Addresses: addresses })
         ipfs2.on('error', done)
-        ipfs2.on('ready', () => started ++)
+        ipfs2.on('ready', () => started++)
 
         const timeout = setTimeout(() => {
-          done("Timeout!")
+          done('Timeout!')
         }, TIMEOUT)
 
         const checkInterval = setInterval(() => {

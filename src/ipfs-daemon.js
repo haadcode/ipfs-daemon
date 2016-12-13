@@ -8,7 +8,7 @@ const logger = Logger.create('ipfs-daemon', { useColors: false })
 Logger.setLogLevel('NONE')
 
 class IpfsDaemon extends EventEmitter {
-  constructor(options) {
+  constructor (options) {
     super()
 
     let opts = Object.assign({}, defaultOptions)
@@ -40,51 +40,51 @@ class IpfsDaemon extends EventEmitter {
   //   return this._name
   // }
 
-  get Options() {
+  get Options () {
     return this._options
   }
 
-  get PeerId() {
+  get PeerId () {
     return this._peerId
   }
 
-  get Addresses() {
+  get Addresses () {
     return {
       Gateway: this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null,
       API: (this.apiHost && this.apiPort) ? this.apiHost + ':' + this.apiPort : null
     }
   }
 
-  get GatewayAddress() {
+  get GatewayAddress () {
     return this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
   }
 
-  get APIAddress() {
+  get APIAddress () {
     return (this.apiHost && this.apiPort) ? this.apiHost + ':' + this.apiPort : null
   }
 
-  stop() {
+  stop () {
     this._handleShutdown()
   }
 
-  _start() {
+  _start () {
     this._initDaemon()
       .then(() => this._startDaemon())
       .then(() => this.emit('ready'))
       .catch((e) => this.emit('error', e))
   }
 
-  _initDaemon() {
+  _initDaemon () {
     throw new Error('_initDaemon() not implemented')
   }
 
-  _startDaemon() {
+  _startDaemon () {
     throw new Error('_startDaemon() not implemented')
   }
 
-  _handleShutdown() {
+  _handleShutdown () {
     logger.debug('Shutting down...')
-    
+
     this._options = null
     this._daemon = null
     this._peerId = null

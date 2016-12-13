@@ -13,8 +13,7 @@ const defaultIpfsDirectory = './ipfs'
 
 const TIMEOUT = 60000
 
-if (typeof window !== 'undefined') 
-  window.LOG = 'NONE'
+if (typeof window !== 'undefined') { window.LOG = 'NONE' }
 
 const hasIpfsApiWithPubsub = (ipfs) => {
   return ipfs.object.get !== undefined
@@ -37,7 +36,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           // assert.equal(ipfs.APIAddress, "127.0.0.1:5001")
           ipfs.stop()
           rmrf.sync(defaultIpfsDirectory)
-          done()        
+          done()
         })
       })
 
@@ -49,7 +48,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           Addresses: {
             API: '/ip4/127.0.0.1/tcp/60320',
             Gateway: '/ip4/0.0.0.0/tcp/60321',
-            Swarm: ['/ip4/0.0.0.0/tcp/60322'],
+            Swarm: ['/ip4/0.0.0.0/tcp/60322']
           }
         }
 
@@ -89,7 +88,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           assert.notEqual(ipfs.PeerId, null)
           ipfs.stop()
           rmrf.sync(defaultIpfsDirectory)
-          done()        
+          done()
         })
       })
     })
@@ -98,24 +97,24 @@ const hasIpfsApiWithPubsub = (ipfs) => {
       it('two daemons', (done) => {
         const dir1 = dataDirectory + '/daemon1'
         const dir2 = dataDirectory + '/daemon2'
-        let started  = 0, res1, res2
+        let started = 0, res1, res2
 
         let addresses = {
           API: '/ip4/127.0.0.1/tcp/0',
           Gateway: '/ip4/0.0.0.0/tcp/0',
-          Swarm: ['/ip4/0.0.0.0/tcp/0'],
+          Swarm: ['/ip4/0.0.0.0/tcp/0']
         }
 
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1, Addresses: addresses })
         ipfs1.on('error', done)
-        ipfs1.on('ready', () => started ++)
+        ipfs1.on('ready', () => started++)
 
         const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2, Addresses: addresses })
         ipfs2.on('error', done)
-        ipfs2.on('ready', () => started ++)
+        ipfs2.on('ready', () => started++)
 
         const timeout = setTimeout(() => {
-          done("Timeout!")
+          done('Timeout!')
         }, TIMEOUT)
 
         const checkInterval = setInterval(() => {
@@ -138,12 +137,13 @@ const hasIpfsApiWithPubsub = (ipfs) => {
     describe('errors', () => {
       it('emit s an error when API address is already in use', (done) => {
         // Skip this test when run in the browser
-        if (IpfsDaemon.Name === 'js-ipfs-browser')
+        if (IpfsDaemon.Name === 'js-ipfs-browser') {
           done()
+        }
 
         const dir1 = dataDirectory + '/daemon1'
         const dir2 = dataDirectory + '/daemon2'
-    
+
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1 })
         ipfs1.on('ready', (res) => {
           const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2 })
@@ -162,12 +162,13 @@ const hasIpfsApiWithPubsub = (ipfs) => {
 
       it('doesn\'t set PeerId if start daemon errors', (done) => {
         // Skip this test when run in the browser
-        if (IpfsDaemon.Name === 'js-ipfs-browser')
+        if (IpfsDaemon.Name === 'js-ipfs-browser') {
           done()
+        }
 
         const dir1 = dataDirectory + '/daemon1'
         const dir2 = dataDirectory + '/daemon2'
-    
+
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1 })
         ipfs1.on('ready', (res) => {
           const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2 })
@@ -184,8 +185,9 @@ const hasIpfsApiWithPubsub = (ipfs) => {
 
       it('emit s an error when Gateway address is already in use', (done) => {
         // Skip this test when run in node.js or in the browser
-        if (IpfsDaemon.Name === 'js-ipfs-browser' || IpfsDaemon.Name === 'js-ipfs')
+        if (IpfsDaemon.Name === 'js-ipfs-browser' || IpfsDaemon.Name === 'js-ipfs') {
           return done()
+        }
 
         const dir1 = dataDirectory + '/daemon1'
         const dir2 = dataDirectory + '/daemon2'
@@ -193,18 +195,18 @@ const hasIpfsApiWithPubsub = (ipfs) => {
         const addr1 = {
           API: '/ip4/127.0.0.1/tcp/0',
           Gateway: '/ip4/0.0.0.0/tcp/8080',
-          Swarm: ['/ip4/0.0.0.0/tcp/0'],
+          Swarm: ['/ip4/0.0.0.0/tcp/0']
         }
 
         const addr2 = {
           API: '/ip4/127.0.0.1/tcp/0',
           Gateway: '/ip4/0.0.0.0/tcp/8080',
-          Swarm: ['/ip4/0.0.0.0/tcp/0'],
+          Swarm: ['/ip4/0.0.0.0/tcp/0']
         }
-    
+
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1, Addresses: addr1 })
         ipfs1.on('ready', (res) => {
-          const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2, Addresses: addr2  })
+          const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2, Addresses: addr2 })
           ipfs2.on('error', (err) => {
             console.log(err)
             const match = String(err).match(/address already in use|EADDRINUSE/)
