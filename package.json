@@ -19,12 +19,12 @@
   "license": "MIT",
   "dependencies": {
     "@haad/ipfsd-ctl": "^0.18.0-beta.4",
-    "ipfs": "ipfs/js-ipfs#deb5fd6",
+    "ipfs": "^0.20.3",
     "logplease": "^1.2.10",
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
-    "aegir": "^9.1.2",
+    "aegir": "^9.2.2",
     "mocha": "^3.1.0",
     "rimraf": "^2.5.4",
     "typescript": "^2.0.9"
