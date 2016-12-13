@@ -14,13 +14,24 @@ class IpfsNativeDaemon extends IpfsDaemon {
   constructor(options) {
     super(options)
 
-    this._name = 'js-ipfs-api+go-ipfs'
-
     // Make sure we have the app data directory
     if (!fs.existsSync(this._options.IpfsDataDir))
       mkdirp.sync(this._options.IpfsDataDir)
 
-    // Initialize and start the daemon
+    // Handle shutdown signals
+    process.on('SIGINT', () => this._handleShutdown)
+    process.on('SIGTERM', () => this._handleShutdown)
+
+    // Log errors
+    process.on('uncaughtException', (error) => {
+      // Skip 'ctrl-c' error and shutdown gracefully
+      const match = String(error).match(/non-zero exit code 255/)
+      if(match)
+        this._handleShutdown()
+      else
+        logger.error(error)
+    })
+
     super._start()
   }
 
@@ -46,7 +57,7 @@ class IpfsNativeDaemon extends IpfsDaemon {
             if (migrationNeeded) {
               let errStr = `Error initializing IPFS daemon: '${migrationNeeded[0]}'\n`
               errStr += `Tried to init IPFS repo at '${this._options.IpfsDataDir}', but failed.\n`
-              errStr += `Use $IPFS_PATH to specify another repo path, eg. 'export IPFS_PATH=/tmp/orbit-floodsub'.`
+              errStr += `Use $IPFS_PATH to specify another repo path, eg. 'export IPFS_PATH=/tmp/ipfs'.`
 
               errStr.split('\n').forEach((e) => logger.error(e))
 
@@ -127,4 +138,5 @@ class IpfsNativeDaemon extends IpfsDaemon {
   }   
 }
 
+IpfsNativeDaemon.Name = 'go-ipfs'
 module.exports = IpfsNativeDaemon

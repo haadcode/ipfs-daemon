@@ -1,22 +1,15 @@
 {
   "name": "ipfs-daemon",
-  "version": "0.3.0-beta.4",
+  "version": "0.3.0-beta.9",
   "description": "Get a running IPFS daemon quickly and easily",
   "main": "src/ipfs-native-daemon.js",
   "scripts": {
     "lint": "aegir-lint",
     "coverage": "gulp coverage",
-    "test": "mocha",
-    "test:node": "gulp test:node",
-    "test:node:core": "TEST=core npm run test:node",
-    "test:node:http": "TEST=http npm run test:node",
-    "test:node:cli": "TEST=cli npm run test:node",
+    "test": "npm run test:node",
+    "test:node": "mocha $(find src -path '*.test.js*')",
     "test:browser": "gulp test:browser",
-    "build": "gulp build",
-    "release": "gulp release",
-    "release-minor": "gulp release --type minor",
-    "release-major": "gulp release --type major",
-    "coverage-publish": "aegir-coverage publish"
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -26,7 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@haad/ipfsd-ctl": "^0.18.0-beta.4",
-    "logplease": "^1.2.9",
+    "ipfs": "ipfs/js-ipfs#4a33d0df5062dc695a813605f9052375b8b5edf9",
+    "logplease": "^1.2.10",
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
