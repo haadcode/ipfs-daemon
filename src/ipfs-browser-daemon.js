@@ -11,7 +11,14 @@ class IpfsBrowserDaemon extends IpfsDaemon {
   constructor(options) {
     // Initialize and start the daemon
     super(options)
-    super._start()
+    this._start()
+  }
+
+  _start() {
+    return this._initDaemon()
+      .then(() => this._startDaemon())
+      .then(() => this.emit('ready'))
+      .catch((e) => this.emit('error', e))
   }
 
   get GatewayAddress() {
@@ -65,6 +72,9 @@ class IpfsBrowserDaemon extends IpfsDaemon {
           return reject(err)
 
         this._daemon.id((err, id) => {
+          if(err) 
+            return reject(err)
+
           this._peerId = id.id
           // Assign the IPFS api to this
           Object.assign(this, this._daemon)

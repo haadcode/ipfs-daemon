@@ -6,7 +6,6 @@ const rmrf = require('rimraf')
 const assert = require('assert')
 const IpfsNodeDaemon = require('../src/ipfs-node-daemon')
 const IpfsNativeDaemon = require('../src/ipfs-native-daemon')
-const IpfsBrowserDaemon = require('../src/ipfs-browser-daemon')
 
 const dataDirectory = '/tmp/ipfs-daemon'
 const defaultIpfsDirectory = './ipfs'
@@ -19,13 +18,24 @@ if (typeof window !== 'undefined')
 const hasIpfsApiWithPubsub = (ipfs) => {
   return ipfs.object.get !== undefined
       && ipfs.object.put !== undefined
-      // && ipfs.pubsub.publish !== undefined
-      // && ipfs.pubsub.subscribe !== undefined
+      && ipfs.pubsub.publish !== undefined
+      && ipfs.pubsub.subscribe !== undefined
 }
 
-[IpfsNodeDaemon, IpfsNativeDaemon].forEach((IpfsDaemon) => {
+// Running the tests in the opposite order results in weird errors, keep it this way
+[IpfsNativeDaemon, IpfsNodeDaemon].forEach((IpfsDaemon) => {
   describe('ipfs-daemon', function () {
     this.timeout(TIMEOUT)
+
+    before(() => {
+      rmrf.sync(dataDirectory)
+      rmrf.sync(defaultIpfsDirectory)
+    })
+
+    after(() => {
+      rmrf.sync(defaultIpfsDirectory)
+      rmrf.sync(dataDirectory)
+    })
 
     describe('starts a daemon', () => {
       it('IpfsDaemon default options', (done) => {

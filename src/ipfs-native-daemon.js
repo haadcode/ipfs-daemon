@@ -32,7 +32,14 @@ class IpfsNativeDaemon extends IpfsDaemon {
         logger.error(error)
     })
 
-    super._start()
+    this._start()
+  }
+
+  _start() {
+    return this._initDaemon()
+      .then(() => this._startDaemon())
+      .then(() => this.emit('ready'))
+      .catch((e) => this.emit('error', e))
   }
 
   _initDaemon() {
@@ -55,13 +62,13 @@ class IpfsNativeDaemon extends IpfsDaemon {
             const migrationNeeded = String(err).match('ipfs repo needs migration')
 
             if (migrationNeeded) {
-              let errStr = `Error initializing IPFS daemon: '${migrationNeeded[0]}'\n`
-              errStr += `Tried to init IPFS repo at '${this._options.IpfsDataDir}', but failed.\n`
-              errStr += `Use $IPFS_PATH to specify another repo path, eg. 'export IPFS_PATH=/tmp/ipfs'.`
+              let errStr = `Error initializing IPFS daemon: '${migrationNeeded[0]}'. `
+              errStr    += `Tried to init IPFS repo at '${this._options.IpfsDataDir}', but failed.\n`
+              // errStr += `Use $IPFS_PATH to specify another repo path, eg. 'export IPFS_PATH=/tmp/ipfs'.`
 
               errStr.split('\n').forEach((e) => logger.error(e))
 
-              reject(errStr)
+              reject(new Error(errStr))
             } 
           } else {
             resolve()
@@ -78,7 +85,6 @@ class IpfsNativeDaemon extends IpfsDaemon {
       logger.debug("Try using IPFS daemon at '" + this._options.useRunningDaemon + "'")
       const ipfs = this._options.ipfsAPI(host, port)
       return new Promise((resolve, reject) => {
-
         ipfs.id((err, id) => {
           if (err) {
             const err = `Couldn't find IPFS daemon at '${this._options.useRunningDaemon}'`
@@ -133,6 +139,10 @@ class IpfsNativeDaemon extends IpfsDaemon {
   _handleShutdown() {
     if(this._daemon)
       this._daemon.stopDaemon()
+
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
+    process.removeAllListeners('uncaughtException')
 
     super._handleShutdown()
   }   

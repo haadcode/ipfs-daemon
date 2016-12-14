@@ -17,7 +17,14 @@ class IpfsNodeDaemon extends IpfsDaemon {
     if (!fs.existsSync(this._options.IpfsDataDir))
       mkdirp.sync(this._options.IpfsDataDir)
 
-    super._start()
+    this._start()
+  }
+
+  _start() {
+    return this._initDaemon()
+      .then(() => this._startDaemon())
+      .then(() => this.emit('ready'))
+      .catch((e) => this.emit('error', e))
   }
 
   get GatewayAddress() {
