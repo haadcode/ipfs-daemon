@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const rmrf = require('rimraf')
 const assert = require('assert')
+const Logger = require('logplease')
 const IpfsNodeDaemon = require('../src/ipfs-node-daemon')
 const IpfsNativeDaemon = require('../src/ipfs-native-daemon')
 
@@ -13,7 +14,7 @@ const defaultIpfsDirectory = './ipfs'
 const TIMEOUT = 60000
 
 if (typeof window !== 'undefined') 
-  window.LOG = 'NONE'
+  window.LOG = 'ERROR'
 
 const hasIpfsApiWithPubsub = (ipfs) => {
   return ipfs.object.get !== undefined
@@ -193,6 +194,8 @@ const hasIpfsApiWithPubsub = (ipfs) => {
       })
 
       it('emit s an error when Gateway address is already in use', (done) => {
+        Logger.setLogLevel('NONE')
+
         // Skip this test when run in node.js or in the browser
         if (IpfsDaemon.Name === 'js-ipfs-browser' || IpfsDaemon.Name === 'js-ipfs')
           return done()
@@ -224,6 +227,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
             ipfs2.stop()
             rmrf.sync(dir1)
             rmrf.sync(dir2)
+            Logger.setLogLevel('ERROR')
             done()
           })
         })

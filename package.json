@@ -7,7 +7,7 @@
     "lint": "aegir-lint",
     "coverage": "gulp coverage",
     "test": "npm run test:node",
-    "test:node": "mocha $(find src -path '*.test.js*')",
+    "test:node": "mocha $(find test -path '*.test.js*')",
     "test:browser": "gulp test:browser",
     "build": "gulp build"
   },

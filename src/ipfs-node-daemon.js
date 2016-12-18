@@ -7,7 +7,7 @@ const IpfsDaemon = require('./ipfs-daemon.js')
 
 const Logger = require('logplease')
 const logger = Logger.create('ipfs-daemon')
-Logger.setLogLevel('NONE')
+Logger.setLogLevel('ERROR')
 
 class IpfsNodeDaemon extends IpfsDaemon {
   constructor(options) {
@@ -62,7 +62,7 @@ class IpfsNodeDaemon extends IpfsDaemon {
               if (err)
                 reject(err)
               else
-                resolve()            
+                resolve()
             })
           })
         })
@@ -78,7 +78,13 @@ class IpfsNodeDaemon extends IpfsDaemon {
           return reject(err)
 
         this._daemon.id((err, id) => {
+          if (err) {
+            logger.error(err)
+            return reject(err)
+          }
+
           this._peerId = id.id
+
           // Assign the IPFS api to this
           Object.assign(this, this._daemon)
           logger.debug('IPFS daemon started')
@@ -94,7 +100,7 @@ class IpfsNodeDaemon extends IpfsDaemon {
       this._daemon.goOffline()
 
     super._handleShutdown()
-  }   
+  }
 }
 
 IpfsNodeDaemon.Name = 'js-ipfs'

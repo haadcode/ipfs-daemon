@@ -5,7 +5,7 @@ const path = require('path')
 const EventEmitter = require('events').EventEmitter
 const Logger = require('logplease')
 const logger = Logger.create('ipfs-daemon', { useColors: false })
-Logger.setLogLevel('NONE')
+Logger.setLogLevel('ERROR')
 
 class IpfsDaemon extends EventEmitter {
   constructor(options) {
@@ -17,15 +17,9 @@ class IpfsDaemon extends EventEmitter {
     this._options = opts
     this._daemon = null
     this._peerId = null
-    // this._name = 'ipfs-daemon'
 
     Logger.setLogfile(path.join(this._options.LogDirectory, '/ipfs-daemon.log'))
-
   }
-
-  // get Name() {
-  //   return this._name
-  // }
 
   get Options() {
     return this._options
@@ -56,7 +50,7 @@ class IpfsDaemon extends EventEmitter {
 
   _handleShutdown() {
     logger.debug('Shutting down...')
-    
+
     this._options = null
     this._daemon = null
     this._peerId = null

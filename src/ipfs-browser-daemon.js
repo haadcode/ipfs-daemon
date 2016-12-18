@@ -5,7 +5,7 @@ const IpfsDaemon = require('./ipfs-daemon.js')
 
 const Logger = require('logplease')
 const logger = Logger.create('ipfs-daemon', { useColors: false, showTimestamp: false })
-Logger.setLogLevel('NONE')
+Logger.setLogLevel('ERROR')
 
 class IpfsBrowserDaemon extends IpfsDaemon {
   constructor(options) {
@@ -41,11 +41,11 @@ class IpfsBrowserDaemon extends IpfsDaemon {
             return reject(err)
 
           if (this._options.SignalServer) {
-             // Add at least one libp2p-webrtc-star address. Without an address like this
-             // the libp2p-webrtc-star transport won't be installed, and the resulting
-             // node won't be able to dial out to libp2p-webrtc-star addresses.
+            // Add at least one libp2p-webrtc-star address. Without an address like this
+            // the libp2p-webrtc-star transport won't be installed, and the resulting
+            // node won't be able to dial out to libp2p-webrtc-star addresses.
             const signalServer = ('/libp2p-webrtc-star/ip4/' + this._options.SignalServer + '/tcp/9090/ws/ipfs/' + config.Identity.PeerID)
-            this._options.Addresses.Swarm = [signalServer]            
+            this._options.Addresses.Swarm = [signalServer]
           }
 
           this._daemon.config.set('Addresses', this._options.Addresses, (err) => {
@@ -56,7 +56,7 @@ class IpfsBrowserDaemon extends IpfsDaemon {
               if (err)
                 reject(err)
               else
-                resolve()            
+                resolve()
             })
           })
         })
@@ -72,10 +72,13 @@ class IpfsBrowserDaemon extends IpfsDaemon {
           return reject(err)
 
         this._daemon.id((err, id) => {
-          if(err) 
+          if (err) {
+            logger.error(err)
             return reject(err)
+          }
 
           this._peerId = id.id
+
           // Assign the IPFS api to this
           Object.assign(this, this._daemon)
           logger.debug('IPFS daemon started')
@@ -91,7 +94,7 @@ class IpfsBrowserDaemon extends IpfsDaemon {
       this._daemon.goOffline()
 
     super._handleShutdown()
-  }   
+  }
 }
 
 IpfsBrowserDaemon.Name = 'js-ipfs-browser'

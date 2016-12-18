@@ -8,7 +8,7 @@ const IpfsDaemon = require('./ipfs-daemon.js')
 
 const Logger = require('logplease')
 const logger = Logger.create("ipfs-daemon")
-Logger.setLogLevel('NONE')
+Logger.setLogLevel('ERROR')
 
 class IpfsNativeDaemon extends IpfsDaemon {
   constructor(options) {
@@ -99,7 +99,7 @@ class IpfsNativeDaemon extends IpfsDaemon {
 
           logger.debug(`Found IPFS daemon at '${this._options.useRunningDaemon}'`)
           resolve()
-        })        
+        })
       })
     }
 
@@ -121,17 +121,21 @@ class IpfsNativeDaemon extends IpfsDaemon {
         }
 
         ipfs.id((err, id) => {
+          if (err) {
+            logger.error(err)
+            return reject(err)
+          }
+
           this._peerId = id.id
 
           // Assign the IPFS api to this
           Object.assign(this, ipfs)
-
           logger.debug("Gateway listening at", this.GatewayAddress)
           logger.debug("IPFS daemon started at", this.APIAddress)
           resolve()
         })
 
-      })      
+      })
     })
   }
 
@@ -145,7 +149,7 @@ class IpfsNativeDaemon extends IpfsDaemon {
     process.removeAllListeners('uncaughtException')
 
     super._handleShutdown()
-  }   
+  }
 }
 
 IpfsNativeDaemon.Name = 'go-ipfs'
