@@ -44,7 +44,9 @@ class IpfsBrowserDaemon extends IpfsDaemon {
             // Add at least one libp2p-webrtc-star address. Without an address like this
             // the libp2p-webrtc-star transport won't be installed, and the resulting
             // node won't be able to dial out to libp2p-webrtc-star addresses.
-            const signalServer = ('/libp2p-webrtc-star/ip4/' + this._options.SignalServer + '/tcp/9090/ws/ipfs/' + config.Identity.PeerID)
+            const host = this._options.SignalServer.split(':')[0] || '0.0.0.0'
+            const port = this._options.SignalServer.split(':')[1] || 9090
+            const signalServer = `/libp2p-webrtc-star/ip4/${host}/tcp/${port}/ws/ipfs/${config.Identity.PeerID}`
             this._options.Addresses.Swarm = [signalServer]
           }
 
