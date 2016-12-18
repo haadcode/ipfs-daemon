@@ -7,7 +7,7 @@ test: deps
 	npm run test:node
 	npm run test:browser
 
-build: test
+build: deps
 	npm run build
 	cp dist/ipfs-browser-daemon.min.js examples/browser/lib/ipfs-browser-daemon.min.js
 
