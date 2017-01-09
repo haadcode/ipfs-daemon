@@ -25,6 +25,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
 
 // Running the tests in the opposite order results in weird errors, keep it this way
 [IpfsNativeDaemon, IpfsNodeDaemon].forEach((IpfsDaemon) => {
+// [IpfsNativeDaemon].forEach((IpfsDaemon) => {
   describe('ipfs-daemon', function () {
     this.timeout(TIMEOUT)
 
@@ -156,6 +157,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
         const dir2 = dataDirectory + '/daemon2'
     
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1 })
+        ipfs1.on('error', done)
         ipfs1.on('ready', (res) => {
           const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2 })
           ipfs2.on('error', (err) => {
@@ -178,7 +180,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
 
         const dir1 = dataDirectory + '/daemon1'
         const dir2 = dataDirectory + '/daemon2'
-    
+
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1 })
         ipfs1.on('ready', (res) => {
           const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2 })
@@ -219,7 +221,6 @@ const hasIpfsApiWithPubsub = (ipfs) => {
         ipfs1.on('ready', (res) => {
           const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2, Addresses: addr2  })
           ipfs2.on('error', (err) => {
-            console.log(err)
             const match = String(err).match(/address already in use|EADDRINUSE/)
             assert.notEqual(err, null)
             // assert.equal(match[0], 'address already in use')

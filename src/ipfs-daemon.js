@@ -31,13 +31,13 @@ class IpfsDaemon extends EventEmitter {
 
   get Addresses() {
     return {
-      Gateway: this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null,
+      Gateway: (this.gatewayHost && this.gatewayPort) ? this.gatewayHost + ':' + this.gatewayPort + '/ipfs/' : null,
       API: (this.apiHost && this.apiPort) ? this.apiHost + ':' + this.apiPort : null
     }
   }
 
   get GatewayAddress() {
-    return this._daemon.gatewayAddr ? this._daemon.gatewayAddr + '/ipfs/' : null
+    return (this.gatewayHost && this.gatewayPort) ? this.gatewayHost + ':' + this.gatewayPort + '/ipfs/' : null
   }
 
   get APIAddress() {

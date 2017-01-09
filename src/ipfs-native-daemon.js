@@ -56,8 +56,19 @@ class IpfsNativeDaemon extends IpfsDaemon {
         logger.debug("Initializing IPFS daemon")
         logger.debug(`Using IPFS repo at '${node.path}'`)
 
-        this._daemon.init({ directory: this._options.IpfsDataDir }, (err, node) => {          
+        // try {
+        //   if (fs.lstatSync(this._options.IpfsDataDir)) {
+        //     logger.debug(`IPFS repo already exists at '${node.path}'`)
+        //     return resolve()
+        //   }
+        // } catch(e) {
+        //   logger.debug(`IPFS repo doesn't exists at '${node.path}', creating a new one`)
+        // }
+
+        this._daemon.init({ directory: this._options.IpfsDataDir }, (err, node) => {
           if (err) {
+            let errStr = err.message
+
             // Check if the IPFS repo is an incompatible one
             const migrationNeeded = String(err).match('ipfs repo needs migration')
 
@@ -69,7 +80,9 @@ class IpfsNativeDaemon extends IpfsDaemon {
               errStr.split('\n').forEach((e) => logger.error(e))
 
               reject(new Error(errStr))
-            } 
+            } else {
+              resolve()
+            }
           } else {
             resolve()
           }
@@ -109,13 +122,12 @@ class IpfsNativeDaemon extends IpfsDaemon {
         if (err)
           return reject(err)
 
-
         if (this._options.ipfsAPI) {
           const apiHost = ipfs.apiHost
           const apiPort = ipfs.apiPort
 
           ipfs = this._options.ipfsAPI(ipfs.apiHost, ipfs.apiPort)
-          
+
           ipfs.apiHost = apiHost
           ipfs.apiPort = apiPort
         }
