@@ -97,9 +97,13 @@
               ipfs.swarm.peers((err, res) => {
                 peers.removeAttribute("style")
                 peers.style.fontSize = "0.6em"
-                
+
                 const peerAsHtml = res
-                  .map((e, idx) => "<span>" + idx + ". " + e.toString() + "</span>")
+                  .map((e, idx) => {
+                    const id = e.peer.id.toJSON().id
+                    const addr = e.addr.toString()
+                    return `<span> ${idx}. ${id} ${addr}</span>`
+                  })
                   .join("<br/>")
 
                 peers.innerHTML =  "<br/>Peers:<br/>" + peerAsHtml
@@ -111,7 +115,7 @@
             console.error(e)
             errors.innerHTML = "<br/><span class='error'>" + e + "</span>"
             errors.removeAttribute("style")
-          })          
+          })
         }
       }
 

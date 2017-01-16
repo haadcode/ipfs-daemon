@@ -6,6 +6,7 @@ const EventEmitter = require('events').EventEmitter
 const Logger = require('logplease')
 const logger = Logger.create('ipfs-daemon', { useColors: false })
 Logger.setLogLevel('ERROR')
+const Buffer = require('buffer/').Buffer
 
 class IpfsDaemon extends EventEmitter {
   constructor(options) {
@@ -13,6 +14,9 @@ class IpfsDaemon extends EventEmitter {
 
     let opts = Object.assign({}, defaultOptions)
     Object.assign(opts, options)
+
+    // quick fix to expose Buffer
+    this.types = { Buffer: Buffer }
 
     this._options = opts
     this._daemon = null
