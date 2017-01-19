@@ -1,6 +1,6 @@
 {
   "name": "ipfs-daemon",
-  "version": "0.3.0-beta.17",
+  "version": "0.3.0-beta.18",
   "description": "Get a running IPFS daemon quickly and easily",
   "main": "src/ipfs-native-daemon.js",
   "scripts": {
@@ -18,14 +18,14 @@
   "author": "Haad",
   "license": "MIT",
   "dependencies": {
-    "@haad/ipfsd-ctl": "^0.18.0-beta.8",
+    "@haad/ipfsd-ctl": "^0.18.0-beta.10",
     "ipfs": "^0.21.0",
     "ipfs-api": "ipfs/js-ipfs-api#6ee082c6a17ea7ddd1297595691f9b83209518d3",
     "logplease": "^1.2.10",
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
-    "aegir": "^9.1.2",
+    "aegir": "^9.3.1",
     "buffer": "^5.0.2",
     "mocha": "^3.1.0",
     "rimraf": "^2.5.4",
