@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@haad/ipfsd-ctl": "^0.18.0-beta.10",
-    "ipfs": "^0.21.0",
+    "ipfs": "^0.21.7",
     "ipfs-api": "ipfs/js-ipfs-api#6ee082c6a17ea7ddd1297595691f9b83209518d3",
     "logplease": "^1.2.10",
     "mkdirp": "^0.5.1"
