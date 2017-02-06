@@ -47,11 +47,17 @@ class IpfsNodeDaemon extends IpfsDaemon {
             return reject(err)
 
           if (this._options.SignalServer) {
-             // Add at least one libp2p-webrtc-star address. Without an address like this
-             // the libp2p-webrtc-star transport won't be installed, and the resulting
-             // node won't be able to dial out to libp2p-webrtc-star addresses.
-            const signalServer = ('/libp2p-webrtc-star/ip4/' + this._options.SignalServer + '/tcp/9090/ws/ipfs/' + config.Identity.PeerID)
-            this._options.Addresses.Swarm = [signalServer]            
+            const address = this._options.SignalServer.split(':')
+            const host = address[0] || '0.0.0.0'
+            const port = address[1] || 9090
+            const signalServer = address.length > 1
+              // IP:port
+              ? `/libp2p-webrtc-star/ip4/${host}/tcp/${port}/ws/ipfs/${config.Identity.PeerID}`
+              // Domain
+              : `/libp2p-webrtc-star/dns4/${this._options.SignalServer}/wss/ipfs/${config.Identity.PeerID}`
+
+            this._options.Addresses.Swarm = [signalServer]
+            // this._options.Discovery.MDNS.Enabled = false
           }
 
           this._daemon.config.set('Addresses', this._options.Addresses, (err) => {
