@@ -19,8 +19,8 @@ if (typeof window !== 'undefined')
 const hasIpfsApiWithPubsub = (ipfs) => {
   return ipfs.object.get !== undefined
       && ipfs.object.put !== undefined
-      && ipfs.pubsub.publish !== undefined
-      && ipfs.pubsub.subscribe !== undefined
+      // && ipfs.pubsub.publish !== undefined
+      // && ipfs.pubsub.subscribe !== undefined
 }
 
 // Running the tests in the opposite order results in weird errors, keep it this way
@@ -49,7 +49,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           // assert.equal(ipfs.APIAddress, "127.0.0.1:5001")
           ipfs.stop()
           rmrf.sync(defaultIpfsDirectory)
-          done()        
+          done()
         })
       })
 
@@ -101,7 +101,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           assert.notEqual(ipfs.PeerId, null)
           ipfs.stop()
           rmrf.sync(defaultIpfsDirectory)
-          done()        
+          done()
         })
       })
     })
@@ -155,7 +155,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
 
         const dir1 = dataDirectory + '/daemon1'
         const dir2 = dataDirectory + '/daemon2'
-    
+
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1 })
         ipfs1.on('error', done)
         ipfs1.on('ready', (res) => {
@@ -216,7 +216,7 @@ const hasIpfsApiWithPubsub = (ipfs) => {
           Gateway: '/ip4/0.0.0.0/tcp/8080',
           Swarm: ['/ip4/0.0.0.0/tcp/0'],
         }
-    
+
         const ipfs1 = new IpfsDaemon({ IpfsDataDir: dir1, Addresses: addr1 })
         ipfs1.on('ready', (res) => {
           const ipfs2 = new IpfsDaemon({ IpfsDataDir: dir2, Addresses: addr2  })

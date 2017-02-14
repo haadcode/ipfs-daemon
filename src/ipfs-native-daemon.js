@@ -3,7 +3,7 @@
 const fs = require('fs')
 const mkdirp = require('mkdirp')
 const path = require('path')
-const ipfsd = require('@haad/ipfsd-ctl')
+const ipfsd = require('ipfsd-ctl')
 const IpfsDaemon = require('./ipfs-daemon.js')
 
 const Logger = require('logplease')

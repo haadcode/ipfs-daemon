@@ -1,4 +1,4 @@
-all: build
+all: test
 
 deps:
 	npm install
@@ -6,6 +6,7 @@ deps:
 test: deps
 	npm run test:node
 	npm run test:browser
+	@echo "Run 'make build' to build the stand-alone library for browsers."
 
 build: deps
 	npm run build
