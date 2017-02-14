@@ -37,7 +37,14 @@ class IpfsNodeDaemon extends IpfsDaemon {
 
   _initDaemon() {
     return new Promise((resolve, reject) => {
-      this._daemon = new IPFS(this._options.IpfsDataDir)
+      const ipfsOptions = {
+        repo: this._options.IpfsDataDir,
+        EXPERIMENTAL: {
+          pubsub: true
+        }
+      }
+
+      this._daemon = new IPFS(ipfsOptions)
       this._daemon.init({ emptyRepo: true, bits: 2048 }, (err) => {
         if (err && err.message !== 'repo already exists') 
           return reject(err)
