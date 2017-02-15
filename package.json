@@ -20,7 +20,7 @@
   "dependencies": {
     "go-ipfs-dep": "github:ipfs/npm-go-ipfs-dep#feat\/0.4.5",
     "ipfsd-ctl": "github:ipfs/js-ipfsd-ctl#feat\/gateway-address",
-    "ipfs": "~0.21.8",
+    "ipfs": "~0.22.0",
     "logplease": "~1.2.10",
     "mkdirp": "~0.5.1"
   },
