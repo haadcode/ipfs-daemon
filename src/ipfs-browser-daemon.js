@@ -58,18 +58,29 @@ class IpfsBrowserDaemon extends IpfsDaemon {
               : `/libp2p-webrtc-star/dns4/${this._options.SignalServer}/wss/ipfs/${config.Identity.PeerID}`
 
             this._options.Addresses.Swarm = [signalServer]
-            // this._options.Discovery.MDNS.Enabled = false
           }
 
-          this._daemon.config.set('Addresses', this._options.Addresses, (err) => {
+          this._options = Object.assign(config, this._options)
+
+          this._daemon.config.set('Bootstrap', this._options.Bootstrap, (err) => {
             if (err)
               return reject(err)
 
-            this._daemon.load((err) => {
+            this._daemon.config.set('Discovery', this._options.Discovery, (err) => {
               if (err)
-                reject(err)
-              else
-                resolve()
+                return reject(err)
+
+              this._daemon.config.set('Addresses', this._options.Addresses, (err) => {
+                if (err)
+                  return reject(err)
+
+                this._daemon.load((err) => {
+                  if (err)
+                    reject(err)
+                  else
+                    resolve()
+                })
+              })
             })
           })
         })
