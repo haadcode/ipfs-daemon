@@ -19,13 +19,14 @@
   "license": "MIT",
   "dependencies": {
     "ipfsd-ctl": "~0.19.0",
-    "ipfs-api": "github:ipfs/js-ipfs-api#feat\/floodsub-rebase",
+    "ipfs-api": "github:ipfs/js-ipfs-api#feat/floodsub-rebase",
     "ipfs": "~0.22.0",
     "logplease": "~1.2.10",
     "mkdirp": "~0.5.1"
   },
   "devDependencies": {
     "aegir": "~9.3.1",
+    "brace-expansion": "^1.1.6",
     "buffer": "~5.0.2",
     "mocha": "~3.1.0",
     "rimraf": "~2.5.4",
