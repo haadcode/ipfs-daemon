@@ -1,6 +1,6 @@
 {
   "name": "ipfs-daemon",
-  "version": "0.3.0-beta.24",
+  "version": "0.3.0-beta.25",
   "description": "Get a running IPFS daemon quickly and easily",
   "main": "src/ipfs-native-daemon.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "author": "Haad",
   "license": "MIT",
   "dependencies": {
-    "ipfsd-ctl": "~0.19.0",
+    "ipfsd-ctl": "github:ipfs/js-ipfsd-ctl#for-orbit-electron",
     "ipfs-api": "github:ipfs/js-ipfs-api#feat/floodsub-rebase",
     "ipfs": "~0.22.0",
     "logplease": "~1.2.10",
