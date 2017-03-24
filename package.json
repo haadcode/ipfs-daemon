@@ -20,7 +20,7 @@
   "dependencies": {
     "ipfsd-ctl": "github:ipfs/js-ipfsd-ctl#for-orbit-electron",
     "ipfs-api": "github:ipfs/js-ipfs-api#feat/floodsub-rebase",
-    "ipfs": "~0.22.0",
+    "ipfs": "~0.23.0",
     "logplease": "~1.2.10",
     "mkdirp": "~0.5.1"
   },
