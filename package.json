@@ -28,6 +28,7 @@
     "aegir": "~9.3.1",
     "buffer": "~5.0.2",
     "mocha": "~3.1.0",
-    "rimraf": "~2.5.4"
+    "rimraf": "~2.5.4",
+    "uglify-js": "github:mishoo/UglifyJS2#harmony"
   }
 }

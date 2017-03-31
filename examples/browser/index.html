@@ -41,7 +41,7 @@
     <input id="port" type="text" placeholder="Port" value="5001"/>
     <br/>
     <label for="dir">IPFS Data Directory</label>
-    <input id="dir" type="text" placeholder="IPFS data directory" value="/tmp/daemon"/>
+    <input id="dir" type="text" placeholder="IPFS data directory" value="/ipfs-daemon-example"/>
     <br/>
     <br/>
     <button id="start" type="button">Start</button>
@@ -76,14 +76,14 @@
 
           let opts = {
             IpfsDataDir: dirInput.value,
-            SignalServer: '178.62.241.75',
+            SignalServer: 'star-signal.cloud.ipfs.team', // IPFS dev server
             Addresses: {
               Swarm: ['/ip4/0.0.0.0/tcp/' + portInput.value],
             }
           }
 
           ipfs = new IpfsDaemon(opts)
-          
+
           ipfs.on('ready', () => {
             output.innerHTML = " 🚀 IPFS daemon started"
 
@@ -113,7 +113,7 @@
 
           ipfs.on('error', (e) => {
             console.error(e)
-            errors.innerHTML = "<br/><span class='error'>" + e + "</span>"
+            errors.innerHTML = "<br/><span class='error'>" + e.stack + "</span>"
             errors.removeAttribute("style")
           })
         }
@@ -133,7 +133,7 @@
 
       startButton.addEventListener('click', start)
       stopButton.addEventListener('click', stop)
-      
+
       errors.addEventListener('click', () => {
         errors.innerHTML = ""
       })
