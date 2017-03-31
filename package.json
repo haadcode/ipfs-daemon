@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "ipfsd-ctl": "github:ipfs/js-ipfsd-ctl#for-orbit-electron",
-    "ipfs-api": "github:ipfs/js-ipfs-api#feat/floodsub-rebase",
+    "ipfs-api": "~14.0.0",
     "ipfs": "~0.22.0",
     "logplease": "~1.2.10",
     "mkdirp": "~0.5.1"
