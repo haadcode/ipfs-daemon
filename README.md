@@ -5,7 +5,16 @@
 
 > Get a running IPFS daemon quickly with Javascript
 
-This module provides a quick way to get an [IPFS](https://ipfs.io) daemon up and running in your Javascript program. It works with both **Node.js** and the **browsers**. 
+This module provides a quick way to get an [IPFS](https://ipfs.io) daemon up and running in your Javascript program. It works with both **Node.js** and the **browsers** and can be used to start a [js-ipfs](https://github.com/ipfs/js-ipfs) instance or a [go-ipfs](https://github.com/ipfs/go-ipfs) daemon. 
+
+***NOTE!*** *This module will be deprecated in the near future. [js-ipfs](https://github.com/ipfs/js-ipfs) has now implemented a new API for creating an instance which is similar to the API in `ipfs-daemon`. Please also note that module uses js-ipfs@0.22.0 which is older than the latest version.*
+
+***The recommended way to create an IPFS instance for Node.js and Browsers is to use [js-ipfs](https://github.com/ipfs/js-ipfs#ipfs-core-use-ipfs-as-a-module).***
+
+This modules uses:
+- [js-ipfs](https://github.com/ipfs/js-ipfs)
+- [js-ipfs-api](https://github.com/ipfs/js-ipfs-api)
+- [js-ipfsd-ctl](https://github.com/ipfs/js-ipfsd-ctl)
 
 ## Table of Contents
 
