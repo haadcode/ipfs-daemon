@@ -11,6 +11,7 @@ Logger.setLogLevel('ERROR')
 
 class IpfsNodeDaemon extends IpfsDaemon {
   constructor(options) {
+    logger.debug('Constructing IPFS daemon')
     super(options)
 
     // Make sure we have the app data directory
@@ -80,7 +81,7 @@ class IpfsNodeDaemon extends IpfsDaemon {
                 if (err)
                   return reject(err)
 
-                this._daemon.load((err) => {
+                this._daemon.preStart((err) => {
                   if (err)
                     reject(err)
                   else
@@ -97,23 +98,27 @@ class IpfsNodeDaemon extends IpfsDaemon {
   _startDaemon() {
     return new Promise((resolve, reject) => {
       logger.debug('Starting IPFS daemon')
-      this._daemon.goOnline((err) => {
-        if (err)
+
+      this._daemon.id((err, id) => {
+        if (err) {
+          logger.error(err)
           return reject(err)
+        }
 
-        this._daemon.id((err, id) => {
-          if (err) {
-            logger.error(err)
-            return reject(err)
-          }
+        this._peerId = id.id
 
-          this._peerId = id.id
-
-          // Assign the IPFS api to this
-          Object.assign(this, this._daemon)
-          logger.debug('IPFS daemon started')
-          resolve()
-        })
+        // Assign the IPFS api to this
+        let readyListeners = this.listeners('ready')
+        let errorListeners = this.listeners('error')
+        Object.assign(this, this._daemon)
+        for (let l of readyListeners) {
+          this.on('ready', l)
+        }
+        for (let l of errorListeners) {
+          this.on('ready', l)
+        }
+        logger.debug('IPFS daemon started')
+        resolve()
       })
     })
   }
@@ -121,7 +126,7 @@ class IpfsNodeDaemon extends IpfsDaemon {
   // Handle shutdown gracefully
   _handleShutdown() {
     if (this._daemon && this._daemon.isOnline())
-      this._daemon.goOffline()
+      this._daemon.stop()
 
     super._handleShutdown()
   }

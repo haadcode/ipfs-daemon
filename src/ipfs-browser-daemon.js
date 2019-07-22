@@ -73,13 +73,8 @@ class IpfsBrowserDaemon extends IpfsDaemon {
               this._daemon.config.set('Addresses', this._options.Addresses, (err) => {
                 if (err)
                   return reject(err)
-
-                this._daemon.load((err) => {
-                  if (err)
-                    reject(err)
-                  else
-                    resolve()
-                })
+                else
+                  resolve()
               })
             })
           })
@@ -91,23 +86,27 @@ class IpfsBrowserDaemon extends IpfsDaemon {
   _startDaemon() {
     return new Promise((resolve, reject) => {
       logger.debug('Starting IPFS daemon')
-      this._daemon.goOnline((err) => {
-        if (err)
+
+      this._daemon.id((err, id) => {
+        if (err) {
+          logger.error(err)
           return reject(err)
+        }
 
-        this._daemon.id((err, id) => {
-          if (err) {
-            logger.error(err)
-            return reject(err)
-          }
+        this._peerId = id.id
 
-          this._peerId = id.id
-
-          // Assign the IPFS api to this
-          Object.assign(this, this._daemon)
-          logger.debug('IPFS daemon started')
-          resolve()
-        })
+        // Assign the IPFS api to this
+        let readyListeners = this.listeners('ready')
+        let errorListeners = this.listeners('error')
+        Object.assign(this, this._daemon)
+        for (let l of readyListeners) {
+          this.on('ready', l)
+        }
+        for (let l of errorListeners) {
+          this.on('ready', l)
+        }
+        logger.debug('IPFS daemon started')
+        resolve()
       })
     })
   }
